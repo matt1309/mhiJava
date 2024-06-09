@@ -3,23 +3,21 @@ package com.thunderstorm.mhi;
 //import java.util.Arrays;
 //import java.util.List;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.TimeUnit;
-import java.util.HashMap;
-import java.util.Map;
-import java.time.LocalDateTime;
-import java.time.Duration;
 
+//import java.util.HashMap;
+//import java.util.Map;
+//import java.time.LocalDateTime;
+//import java.time.Duration;
+
+import org.apache.http.impl.client.CloseableHttpClient;
 //import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 //import org.apache.http.HttpResponse;
@@ -48,6 +46,10 @@ public static Float[] indoorTempList = {-30.0f, -30.0f, -30.0f, -30.0f, -30.0f, 
     private String DeviceID;
     private String OperatorID;
     private String AirConID;
+
+    boolean status;
+String firmware;
+int connectedAccounts;
     
     private boolean outdoorTemperature;
     private Boolean Operation;
@@ -69,8 +71,8 @@ public static Float[] indoorTempList = {-30.0f, -30.0f, -30.0f, -30.0f, -30.0f, 
     private boolean selfCleanOperation = false;
     private boolean selfCleanReset = false;
 
-
-
+    private LocalDateTime nextRequestAfter;
+    private long minrefreshRate = 1L;
 
 
 
@@ -139,7 +141,43 @@ public static Float[] indoorTempList = {-30.0f, -30.0f, -30.0f, -30.0f, -30.0f, 
 
 
 
+    public boolean getstatus() {
+        synchronized (lock) {
+            return status;
+        }
+    }
 
+    public void setstatus(boolean status) {
+        synchronized (lock) {
+            this.status = status;
+        }
+    }
+
+
+
+    public String getfirmware() {
+        synchronized (lock) {
+            return firmware;
+        }
+    }
+
+    public void setfirmware(String firmware) {
+        synchronized (lock) {
+            this.firmware = firmware;
+        }
+    }
+
+    public int getconnectedAccounts() {
+        synchronized (lock) {
+            return connectedAccounts;
+        }
+    }
+
+    public void setconnectedAccounts(int connectedAccounts) {
+        synchronized (lock) {
+            this.connectedAccounts = connectedAccounts;
+        }
+    }
 
 
 
@@ -353,12 +391,36 @@ public static Float[] indoorTempList = {-30.0f, -30.0f, -30.0f, -30.0f, -30.0f, 
         }
     }
 
+    public LocalDateTime isnextRequestAfter() {
+        synchronized (lock) {
+            return nextRequestAfter;
+        }
+    }
+
+    public void setSelfCleanReset(LocalDateTime nextRequestAfter) {
+        synchronized (lock) {
+            this.nextRequestAfter = nextRequestAfter;
+        }
+    }
+
+
+    public long isminrefreshRate() {
+        synchronized (lock) {
+            return minrefreshRate;
+        }
+    }
+
+    public void setSelfCleanReset(long minrefreshRate) {
+        synchronized (lock) {
+            this.minrefreshRate = minrefreshRate;
+        }
+    }
 
 
 
 
 
-private JSONObject post(String command, Map<String, Object> contents) throws Exception {
+    private JSONObject post(String command, Map<String, Object> contents) throws Exception {
         String url = "http://" + hostname + ":" + port + "/beaver/command/" + command;
         JSONObject data = new JSONObject();
         data.put("apiVer", "1.0");
@@ -369,29 +431,35 @@ private JSONObject post(String command, Map<String, Object> contents) throws Exc
         if (contents != null) {
             data.put("contents", new JSONObject(contents));
         }
-
-        mutex.lock();
-        try {
-            long waitTime = Duration.between(LocalDateTime.now(), nextRequestAfter).getSeconds();
-            if (waitTime > 0) {
-                Thread.sleep(waitTime * 1000);
+    
+        synchronized (lock) {
+            CloseableHttpClient httpClient = null;
+            JSONObject jsonResponse = null;
+            try {
+                long waitTime = Duration.between(LocalDateTime.now(), nextRequestAfter).getSeconds();
+                if (waitTime > 0) {
+                    Thread.sleep(waitTime * 1000);
+                }
+    
+                httpClient = HttpClientBuilder.create().build();
+                HttpPost request = new HttpPost(url);
+                request.setHeader("Content-Type", "application/json");
+                request.setEntity(new StringEntity(data.toString()));
+    
+                CloseableHttpResponse response = httpClient.execute(request);
+    
+                String responseString = EntityUtils.toString(response.getEntity());
+                jsonResponse = new JSONObject(responseString);
+    
+                nextRequestAfter = LocalDateTime.now().plusSeconds(minrefreshRate);
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            } finally {
+                if (httpClient != null) {
+                    httpClient.close();
+                }
             }
-
-            HttpClient httpClient = HttpClientBuilder.create().build();
-            HttpPost request = new HttpPost(url);
-            request.setHeader("Content-Type", "application/json");
-            request.setEntity(new StringEntity(data.toString()));
-
-            HttpResponse response = httpClient.execute(request);
-
-            String responseString = EntityUtils.toString(response.getEntity());
-            JSONObject jsonResponse = new JSONObject(responseString);
-
-            nextRequestAfter = LocalDateTime.now().plus(MIN_TIME_BETWEEN_REQUESTS);
-
-            return jsonResponse;
-        } finally {
-            mutex.unlock();
+            return jsonResponse; // Return jsonResponse outside the try-catch block
         }
     }
 

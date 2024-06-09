@@ -180,8 +180,8 @@ public class RacParser {
         return statByte;
     }
 
-    public AirCon translateBytes(String inputString) {
-        AirCon acDevice = new AirCon();
+    public AirCon translateBytes(AirCon acDevice, String inputString) {
+       // AirCon acDevice = new AirCon();
 
         byte[] contentByteArray = Base64.getDecoder().decode(inputString.getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
