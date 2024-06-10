@@ -13,6 +13,8 @@ aircon.sethostname("192.168.0.150");
 aircon.setport("5443");
 
 
+aircon.parser.translateBytes(aircon.getAirconStats(false));
+
 //This would be the part adjusted by user on openhab side. this is turning on the unit. 
 aircon.setOperation(true);
 
@@ -23,9 +25,8 @@ try{
 //sending command to the aircon unit itself
 String response = aircon.sendAircoCommand(aircon.getAircoId(), command);
 
+aircon.parser.translateBytes(response);
 
-//this then loads the new byte data into aircon object. I think i should consolidate this so you dont see it within the aircon unit. 
-parser.translateBytes(aircon, response);
 
 
 }catch (Exception e){
