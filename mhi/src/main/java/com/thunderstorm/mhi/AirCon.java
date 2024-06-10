@@ -468,9 +468,17 @@ public class AirCon {
         return result.getString("contents");
     }
 
-    public String getAirconStats(boolean raw) throws Exception {
+    public boolean getAirconStats(boolean raw) throws Exception {
         JSONObject result = post("getAirconStat", null);
-        return raw ? result.toString() : result.getString("contents");
+       // return raw ? result.toString() : result.getString("contents");
+       try{
+       AirCon.this.parser.translateBytes(result.getString("contents"));
+       return true;
+       }catch (Exception e){
+        System.out.println("Failed to translate response");
+        return false;
+
+       }
     }
 
     public String sendAircoCommand(String command) throws Exception {
