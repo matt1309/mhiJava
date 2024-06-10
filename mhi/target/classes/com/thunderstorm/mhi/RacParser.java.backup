@@ -1,4 +1,4 @@
-package com.thunderstorm.mhi;
+/*package com.thunderstorm.mhi;
 import java.util.Base64;
 
 public class RacParser {

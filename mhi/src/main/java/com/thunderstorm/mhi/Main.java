@@ -5,31 +5,35 @@ public class Main {
         System.out.println("Hello world!");
 
 AirCon aircon = new AirCon();
-RacParser parser = new RacParser();
+
 
 
 //some test examples i plan to run
 aircon.sethostname("192.168.0.150");
 aircon.setport("5443");
 
+
+//initial getting of aircon data. 
+
 try{
-aircon.parser.translateBytes(aircon, aircon.getAirconStats(false));
+aircon.parser.translateBytes(aircon.getAirconStats(false));
 }catch (Exception e){
 
     System.out.println(e.toString());
 }
 
-//This would be the part adjusted by user on openhab side. this is turning on the unit. 
+
+//editing the operation data to on. 
 aircon.setOperation(true);
 
 //tranlsating command into base64 for the unit
-String command = parser.toBase64(aircon);
+String command = aircon.parser.toBase64();
 
 try{
 //sending command to the aircon unit itself
 String response = aircon.sendAircoCommand(aircon.getAircoId(), command);
 
-aircon.parser.translateBytes(aircon, response);
+aircon.parser.translateBytes(response);
 
 
 
