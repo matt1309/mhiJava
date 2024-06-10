@@ -31,7 +31,7 @@ String command = aircon.parser.toBase64();
 
 try{
 //sending command to the aircon unit itself
-String response = aircon.sendAircoCommand(aircon.getAircoId(), command);
+String response = aircon.sendAircoCommand(command);
 
 aircon.parser.translateBytes(response);
 

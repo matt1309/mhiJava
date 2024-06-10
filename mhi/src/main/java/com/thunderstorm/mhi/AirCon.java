@@ -496,7 +496,7 @@ int connectedAccounts;
         return raw ? result.toString() : result.getString("contents");
     }
 
-    public String sendAircoCommand(String aircoId, String command) throws Exception {
+    public String sendAircoCommand(String command) throws Exception {
         Map<String, Object> contents = new HashMap<>();
         contents.put("airconId", AirConID);
         contents.put("airconStat", command);
