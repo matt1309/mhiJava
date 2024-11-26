@@ -28,5 +28,21 @@
         <version>20210307</version>
     </dependency>
 </dependencies>
-
+<build>
+        <plugins>
+            <!-- Maven Jar Plugin to specify the main class in the manife>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>com.thunderstorm.mhi.Main</Main-C>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
