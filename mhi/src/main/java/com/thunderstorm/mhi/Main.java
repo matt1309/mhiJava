@@ -11,7 +11,7 @@ public class Main {
 
         // Set hostname and port.
         aircon.sethostname("192.168.0.12");
-        aircon.setport("5443");
+        aircon.setport("51443");
         aircon.setDeviceID("e8165615c7d6"); 
         aircon.setOperatorID("openhab");
 
