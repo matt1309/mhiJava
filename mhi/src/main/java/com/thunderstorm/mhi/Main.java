@@ -29,6 +29,7 @@ public class Main {
 
         try {
             // Get initial stats from aircon unit and parse into the aircon object.
+            System.out.println("Made it this far");
             aircon.getAirconStats(false);
             // Berlow is the old way of, closer to how python managed it
             // aircon.parser.translateBytes(aircon.getAirconStats(false));

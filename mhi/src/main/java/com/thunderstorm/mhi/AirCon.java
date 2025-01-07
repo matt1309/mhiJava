@@ -414,21 +414,24 @@ public class AirCon {
             CloseableHttpClient httpClient = null;
             JSONObject jsonResponse = null;
             try {
+                if (nextRequestAfter == null) {
+                    nextRequestAfter = LocalDateTime.now();
+                }
                 long waitTime = Duration.between(LocalDateTime.now(), nextRequestAfter).getSeconds();
                 if (waitTime > 0) {
                     Thread.sleep(waitTime * 1000);
                 }
-
+    
                 httpClient = HttpClientBuilder.create().build();
                 HttpPost request = new HttpPost(url);
                 request.setHeader("Content-Type", "application/json");
                 request.setEntity(new StringEntity(data.toString()));
-
+    
                 CloseableHttpResponse response = httpClient.execute(request);
-
+    
                 String responseString = EntityUtils.toString(response.getEntity());
                 jsonResponse = new JSONObject(responseString);
-
+    
                 nextRequestAfter = LocalDateTime.now().plusSeconds(minrefreshRate);
             } catch (Exception e) {
                 System.out.println(e.toString());
