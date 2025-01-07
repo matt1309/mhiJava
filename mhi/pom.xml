@@ -13,24 +13,25 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
- <dependencies>
-    <!-- Apache HttpClient -->
-    <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.5.13</version>
-    </dependency>
+    <dependencies>
+        <!-- Apache HttpClient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.13</version>
+        </dependency>
 
-    <!-- JSON -->
-    <dependency>
-        <groupId>org.json</groupId>
-        <artifactId>json</artifactId>
-        <version>20210307</version>
-    </dependency>
-</dependencies>
-<build>
+        <!-- JSON -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
+        </dependency>
+    </dependencies>
+
+    <build>
         <plugins>
-            <!-- Maven Jar Plugin to specify the main class in the manife>
+            <!-- Maven Jar Plugin to specify the main class in the manifest -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -38,7 +39,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>com.thunderstorm.mhi.Main</Main-C>
+                            <Main-Class>com.thunderstorm.mhi.Main</Main-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>
