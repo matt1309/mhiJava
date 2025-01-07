@@ -10,8 +10,20 @@ public class Main {
         // Set hostname and port.
         aircon.sethostname("192.168.0.12");
         aircon.setport("5443");
-        aircon.setDeviceID("openhabAC-con-device-1314abcdef1"); 
-        aircon.setOperatorID("openhabAC-130995140699130995140699130995");
+        aircon.setDeviceID("e8165615c7d6"); 
+        aircon.setOperatorID("openhab");
+
+
+        /*
+ this.command = command; // "getAirconStat"
+            this.apiVer = apiVer; // "1.0"
+            this.operatorId = operatorId; // "openhab"
+            this.deviceId = deviceId; // "e8165615c7d6"
+            this.timestamp = timestamp; // 842151729
+            this.result = result; // 1
+            this.contents = contents;
+
+        */
 
         try {
             // Get initial stats from aircon unit and parse into the aircon object.
