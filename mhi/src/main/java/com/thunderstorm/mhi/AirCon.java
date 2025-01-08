@@ -561,7 +561,7 @@ public class AirCon {
         JSONObject result = post("getAirconStat", null);
        // return raw ? result.toString() : result.getString("contents");
        try{
-       AirCon.this.parser.translateBytes(result.getString("contents"));
+       AirCon.this.parser.translateBytes(result.get("contents").toString());
        return true;
        }catch (Exception e){
         System.out.println("Failed to translate response");
