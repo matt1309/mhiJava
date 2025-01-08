@@ -561,7 +561,7 @@ public class AirCon {
         JSONObject result = post("getAirconStat", null);
        // return raw ? result.toString() : result.getString("contents");
        try{
-       AirCon.this.parser.translateBytes(result.get("contents").toString());
+       AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
        return true;
        }catch (Exception e){
         System.out.println("Failed to translate response");
@@ -900,6 +900,7 @@ public class AirCon {
 
         public AirCon translateBytes(String inputString) {
             // AirCon acDevice = new AirCon();
+            System.out.println(inputString);
 
             byte[] contentByteArray = Base64.getDecoder()
                     .decode(inputString.getBytes(java.nio.charset.StandardCharsets.UTF_8));
