@@ -396,6 +396,92 @@ public class AirCon {
         }
     }
 
+
+    public void printDeviceData() {
+        if (gethostname() != null && !gethostname().isEmpty()) {
+            System.out.println("Hostname: " + gethostname());
+        }
+        if (getport() != null && !getport().isEmpty()) {
+            System.out.println("Port: " + getport());
+        }
+        if (getDeviceID() != null && !getDeviceID().isEmpty()) {
+            System.out.println("DeviceID: " + getDeviceID());
+        }
+        if (getOperatorID() != null && !getOperatorID().isEmpty()) {
+            System.out.println("OperatorID: " + getOperatorID());
+        }
+        if (getAirConID() != null && !getAirConID().isEmpty()) {
+            System.out.println("AirConID: " + getAirConID());
+        }
+        if (getstatus()) {
+            System.out.println("Status: " + getstatus());
+        }
+        if (getfirmware() != null && !getfirmware().isEmpty()) {
+            System.out.println("Firmware: " + getfirmware());
+        }
+        if (getconnectedAccounts() != 0) {
+            System.out.println("Connected Accounts: " + getconnectedAccounts());
+        }
+        if (getOutdoorTemperature()) {
+            System.out.println("Outdoor Temperature: " + getOutdoorTemperature());
+        }
+        if (getOperation() != null) {
+            System.out.println("Operation: " + getOperation());
+        }
+        if (getOperationMode() != 0) {
+            System.out.println("Operation Mode: " + getOperationMode());
+        }
+        if (getAirFlow() != 0) {
+            System.out.println("AirFlow: " + getAirFlow());
+        }
+        if (getWindDirectionUD() != 0) {
+            System.out.println("WindDirectionUD: " + getWindDirectionUD());
+        }
+        if (getWindDirectionLR() != 0) {
+            System.out.println("WindDirectionLR: " + getWindDirectionLR());
+        }
+        if (getPresetTemp() != 0.0) {
+            System.out.println("PresetTemp: " + getPresetTemp());
+        }
+        if (getEntrust()) {
+            System.out.println("Entrust: " + getEntrust());
+        }
+        if (getModelNr() != 0) {
+            System.out.println("ModelNr: " + getModelNr());
+        }
+        if (getVacant()) {
+            System.out.println("Vacant: " + getVacant());
+        }
+        if (getCoolHotJudge()) {
+            System.out.println("CoolHotJudge: " + getCoolHotJudge());
+        }
+        if (getIndoorTemp() != 0.0) {
+            System.out.println("IndoorTemp: " + getIndoorTemp());
+        }
+        if (getOutdoorTemp() != 0.0) {
+            System.out.println("OutdoorTemp: " + getOutdoorTemp());
+        }
+        if (getElectric() != 0.0) {
+            System.out.println("Electric: " + getElectric());
+        }
+        if (getErrorCode() != null && !getErrorCode().isEmpty()) {
+            System.out.println("ErrorCode: " + getErrorCode());
+        }
+        if (isSelfCleanOperation()) {
+            System.out.println("SelfCleanOperation: " + isSelfCleanOperation());
+        }
+        if (isSelfCleanReset()) {
+            System.out.println("SelfCleanReset: " + isSelfCleanReset());
+        }
+        if (isnextRequestAfter() != null) {
+            System.out.println("NextRequestAfter: " + isnextRequestAfter());
+        }
+        if (isminrefreshRate() != 0) {
+            System.out.println("MinRefreshRate: " + isminrefreshRate());
+        }
+    }
+    
+
     // ----------------// Communication with aircon unit code //----------------//
 
     private JSONObject post(String command, Map<String, Object> contents) throws Exception {

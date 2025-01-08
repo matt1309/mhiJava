@@ -33,6 +33,10 @@ public class Main {
             aircon.getAirconStats(false);
             // Berlow is the old way of, closer to how python managed it
             // aircon.parser.translateBytes(aircon.getAirconStats(false));
+
+
+    aircon.printDeviceData();
+
         } catch (Exception e) {
 
             System.out.println(e.toString());
