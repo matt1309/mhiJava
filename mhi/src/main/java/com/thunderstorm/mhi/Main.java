@@ -31,6 +31,8 @@ public class Main {
             // Get initial stats from aircon unit and parse into the aircon object.
             System.out.println("Made it this far");
             aircon.getAirconStats(false);
+
+            aircon.updateAccountInfo("Europe/London");
             // Berlow is the old way of, closer to how python managed it
             // aircon.parser.translateBytes(aircon.getAirconStats(false));
 
@@ -48,7 +50,7 @@ public class Main {
        
        //aircon.setOperationMode(1); // not Sure what operation modes are but they can be 0 to 4. Need to add
                                     // checking for this ie if not inside that range throw log error.
-        aircon.setPresetTemp(21); // set Temp to 21.
+        aircon.setPresetTemp(18); // set Temp to 21.
 
         // Tranlsating command into base64 to send to unit. Might try consolidate this
         // into the sendAircoComand function. So parser is truly hidden from users of
