@@ -44,7 +44,7 @@ public class Main {
 
         // editing the operation data to on.
        // aircon.setOperation(true); // turn on unit
-        //aircon.setOperationMode(2); // not Sure what operation modes are but they can be 0 to 4. Need to add
+        aircon.setOperationMode(1); // not Sure what operation modes are but they can be 0 to 4. Need to add
                                     // checking for this ie if not inside that range throw log error.
         aircon.setPresetTemp(21); // set Temp to 21.
 
@@ -60,9 +60,11 @@ public class Main {
             // Similar to getAirconStats might be worth consolidating the translateBytes
             // into the sendAircoCommand
 
-            aircon.setPresetTemp(20);
+           // aircon.setPresetTemp(20);
 
-            aircon.parser.translateBytes(response);
+         //   aircon.parser.translateBytes(command);
+
+           aircon.parser.translateBytes(response);
 
             aircon.printDeviceData();
 
