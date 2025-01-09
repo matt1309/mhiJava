@@ -54,17 +54,17 @@ aircon.printDeviceData();
 `
 
 ----//List of Operation Modes\\----
+1 - Dry
+2 - Cool
+3 - fan
+4 - heat
 
-0
-1
-2
-3
-4
-
-
-
-
-
+----//List of AirFlows Modes\\----
+0 - 1
+1 - 2
+2 - 3
+6 - 4
+7 - auto
 
 ----//List of get/set methods and avialable attributes at this point\\----
 
