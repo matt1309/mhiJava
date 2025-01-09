@@ -516,6 +516,7 @@ public class AirCon {
                 CloseableHttpResponse response = httpClient.execute(request);
     
                 String responseString = EntityUtils.toString(response.getEntity());
+                System.out.println(responseString);
                 jsonResponse = new JSONObject(responseString);
     
                 nextRequestAfter = LocalDateTime.now().plusSeconds(minrefreshRate);
@@ -575,6 +576,7 @@ public class AirCon {
         contents.put("airconId", AirConID);
         contents.put("airconStat", command);
         JSONObject result = post("setAirconStat", contents);
+        System.out.println(result.toString());
         return result.getJSONObject("contents").getString("airconStat");
     }
 
@@ -643,7 +645,7 @@ public class AirCon {
             return result;
         }
 
-        public byte[] commandToByte(AirCon airconStat) {
+    public byte[] commandToByte(AirCon airconStat) {
             byte[] statByte = new byte[18];
             statByte[5] = (byte) 255;
 
@@ -900,7 +902,7 @@ public class AirCon {
 
         public AirCon translateBytes(String inputString) {
             // AirCon acDevice = new AirCon();
-            System.out.println(inputString);
+           // System.out.println(inputString);
 
             byte[] contentByteArray = Base64.getDecoder()
                     .decode(inputString.getBytes(java.nio.charset.StandardCharsets.UTF_8));
