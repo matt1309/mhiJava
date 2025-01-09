@@ -40,7 +40,6 @@ The `get`/`set` methods don't actually get data from the aircon unit; instead, t
 //Edit the attributes you want to change using set methods
 aircon.setPresetTemp(21);
 
-
 // Generate the command
 String command = aircon.parser.toBase64();
 
