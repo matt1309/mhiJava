@@ -37,15 +37,17 @@ public class Main {
             // aircon.parser.translateBytes(aircon.getAirconStats(false));
 
 
+
     aircon.printDeviceData();
+
+    System.out.println(aircon.getconnectedAccounts());
 
         } catch (Exception e) {
 
             System.out.println(e.toString());
         }
 
-        // editing the operation data to on.
-      // aircon.setOperation(false); // turn on unit
+    /*
        
        
        //aircon.setOperationMode(1); // not Sure what operation modes are but they can be 0 to 4. Need to add
@@ -59,16 +61,7 @@ public class Main {
 
         try {
             // sending command to the aircon unit itself
-            String response = aircon.sendAircoCommand(command);
-
-            // Similar to getAirconStats might be worth consolidating the translateBytes
-            // into the sendAircoCommand
-
-           // aircon.setPresetTemp(20);
-
-         //   aircon.parser.translateBytes(command);
-
-           aircon.parser.translateBytes(response);
+            aircon.sendAircoCommand(command);
 
             aircon.printDeviceData();
 
@@ -76,6 +69,8 @@ public class Main {
 
             System.out.println(e.toString());
         }
+            */
 
     }
+        
 }

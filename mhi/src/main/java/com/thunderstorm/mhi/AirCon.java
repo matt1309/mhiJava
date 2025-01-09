@@ -396,7 +396,6 @@ public class AirCon {
         }
     }
 
-
     public void printDeviceData() {
         if (gethostname() != null && !gethostname().isEmpty()) {
             System.out.println("Hostname: " + gethostname());
@@ -480,7 +479,6 @@ public class AirCon {
             System.out.println("MinRefreshRate: " + isminrefreshRate());
         }
     }
-    
 
     // ----------------// Communication with aircon unit code //----------------//
 
@@ -509,18 +507,18 @@ public class AirCon {
                 if (waitTime > 0) {
                     Thread.sleep(waitTime * 1000);
                 }
-    
+
                 httpClient = HttpClientBuilder.create().build();
                 HttpPost request = new HttpPost(url);
                 request.setHeader("Content-Type", "application/json");
                 request.setEntity(new StringEntity(data.toString()));
-    
+
                 CloseableHttpResponse response = httpClient.execute(request);
-    
+
                 String responseString = EntityUtils.toString(response.getEntity());
                 System.out.println(responseString);
                 jsonResponse = new JSONObject(responseString);
-    
+
                 nextRequestAfter = LocalDateTime.now().plusSeconds(minrefreshRate);
             } catch (Exception e) {
                 System.out.println(e.toString());
@@ -562,25 +560,33 @@ public class AirCon {
 
     public boolean getAirconStats(boolean raw) throws Exception {
         JSONObject result = post("getAirconStat", null);
-       // return raw ? result.toString() : result.getString("contents");
-       try{
-        AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
-       AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
-       return true;
-       }catch (Exception e){
-        System.out.println("Failed to translate response");
-        return false;
+        // return raw ? result.toString() : result.getString("contents");
+        try {
+            AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
+            AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
+            return true;
+        } catch (Exception e) {
+            System.out.println("Failed to translate response");
+            return false;
 
-       }
+        }
     }
 
-    public String sendAircoCommand(String command) throws Exception {
+    public boolean sendAircoCommand(String command) throws Exception {
         Map<String, Object> contents = new HashMap<>();
         contents.put("airconId", AirConID);
         contents.put("airconStat", command);
         JSONObject result = post("setAirconStat", contents);
-        System.out.println(result.toString());
-        return result.getJSONObject("contents").getString("airconStat");
+
+        try {
+            AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
+            AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
+            return true;
+        } catch (Exception e) {
+            System.out.println("Failed to translate response");
+            return false;
+
+        }
     }
 
     // ----------------// Parser Code //----------------//
@@ -648,7 +654,7 @@ public class AirCon {
             return result;
         }
 
-    public byte[] commandToByte(AirCon airconStat) {
+        public byte[] commandToByte(AirCon airconStat) {
             byte[] statByte = new byte[18];
             statByte[5] = (byte) 255;
 
@@ -905,7 +911,7 @@ public class AirCon {
 
         public AirCon translateBytes(String inputString) {
             // AirCon acDevice = new AirCon();
-           // System.out.println(inputString);
+            // System.out.println(inputString);
 
             byte[] contentByteArray = Base64.getDecoder()
                     .decode(inputString.getBytes(java.nio.charset.StandardCharsets.UTF_8));
