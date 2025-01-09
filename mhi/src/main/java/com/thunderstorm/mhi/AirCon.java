@@ -491,8 +491,8 @@ public class AirCon {
         data.put("operatorId", OperatorID);
         data.put("timestamp", System.currentTimeMillis() / 1000);
         if (contents != null) {
-            JSONObject contentsJSON = new JSONObject(contents);
-            System.out.println("contentsJSON: " + contentsJSON.toString());
+           // JSONObject contentsJSON = new JSONObject(contents);
+           // System.out.println("contentsJSON: " + contentsJSON.toString());
             data.put("contents", new JSONObject(contents));
         }
 
@@ -540,14 +540,14 @@ public class AirCon {
         return new JSONObject(getInfo()).getString("airconId");
     }
 
-    public String updateAccountInfo(String timeZone) throws Exception {
+    public boolean updateAccountInfo(String timeZone) throws Exception {
         Map<String, Object> contents = new HashMap<>();
         contents.put("accountId", OperatorID);
         contents.put("airconId", AirConID);
         contents.put("remote", 0);
         contents.put("timezone", timeZone);
         JSONObject result = post("updateAccountInfo", contents);
-        return result.getString("contents");
+        return true;
     }
 
     public String delAccountInfo() throws Exception {
