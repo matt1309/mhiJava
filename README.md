@@ -25,8 +25,6 @@ Initialisation and first connection:
 
     //Add user account using the information stored in aircon object already
     aircon.updateAccountInfo("Europe/London");
-
-    //
     `
 
 
@@ -53,20 +51,20 @@ Useful commands for debugging:
 aircon.printDeviceData(); 
 `
 
-----//List of Operation Modes\\----
+----//List of Operation Modes//----
 1 - Dry
 2 - Cool
 3 - fan
 4 - heat
 
-----//List of AirFlows Modes\\----
+----//List of AirFlows Modes//----
 0 - 1
 1 - 2
 2 - 3
 6 - 4
 7 - auto
 
-----//List of get/set methods and avialable attributes at this point\\----
+----//List of get/set methods and avialable attributes at this point//----
 
 `
 // Gets the hostname of the aircon unit
