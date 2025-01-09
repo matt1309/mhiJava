@@ -493,6 +493,8 @@ public class AirCon {
         data.put("operatorId", OperatorID);
         data.put("timestamp", System.currentTimeMillis() / 1000);
         if (contents != null) {
+            JSONObject contentsJSON = new JSONObject(contents);
+            System.out.println("contentsJSON: " + contentsJSON.toString());
             data.put("contents", new JSONObject(contents));
         }
 
@@ -562,6 +564,7 @@ public class AirCon {
         JSONObject result = post("getAirconStat", null);
        // return raw ? result.toString() : result.getString("contents");
        try{
+        AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
        AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
        return true;
        }catch (Exception e){
