@@ -1,83 +1,88 @@
-A generic Java interface for Mitsubishi Aircon Units. 
+# Mitsubishi Aircon Java Interface
 
-Heaily inspired/ported from Home assistant addon:
-https://github.com/jeatheak/Mitsubishi-WF-RAC-Integration
+A generic Java interface for Mitsubishi Aircon Units.
 
+Heavily inspired/ported from the Home Assistant addon:  
+[https://github.com/jeatheak/Mitsubishi-WF-RAC-Integration](https://github.com/jeatheak/Mitsubishi-WF-RAC-Integration)
 
+---
 
-How to use:
-inlcude the AirCon.java class
+## How to Use
 
+Include the `AirCon.java` class in your project.
 
-Initialisation and first connection:
-` 
-    // Create object
-    AirCon aircon = new AirCon();
+### Initialization and First Connection
 
-    // Set hostname and port.
-    aircon.sethostname("192.168.0.12");
-    aircon.setport("51443");
-    aircon.setDeviceID("e8165615c7d6"); 
-    aircon.setOperatorID("openhab");
+```java
+// Create object
+AirCon aircon = new AirCon();
 
-    //Get initial data from the aircon unit
-    aircon.getAirconStats(false); 
+// Set hostname and port.
+aircon.sethostname("192.168.0.12");
+aircon.setport("51443");
+aircon.setDeviceID("e8165615c7d6"); 
+aircon.setOperatorID("openhab");
 
-    //Add user account using the information stored in aircon object already
-    aircon.updateAccountInfo("Europe/London");
-    `
+// Get initial data from the aircon unit
+aircon.getAirconStats(false); 
 
+// Add user account using the information stored in aircon object already
+aircon.updateAccountInfo("Europe/London");
+```
 
-Once the aircon is connected using the above you can edit attributes using get and set methods (complete list of available methods are noted below). 
+Once the aircon is connected using the above, you can edit attributes using `get` and `set` methods (a complete list of available methods is noted below). 
 
-The get/set methods dont actually get the data from the aircon unit instead they update the attributes stored in the aircon object. To send the changes made to the unit you need to generate the command and then send to the unit with 
+### Sending Commands to the Aircon Unit
 
-`
+The `get`/`set` methods don't actually get data from the aircon unit; instead, they update the attributes stored in the aircon object. To send changes to the unit, generate the command and send it as follows:
+
+```java
+// Generate the command
 String command = aircon.parser.toBase64();
-`
 
-and then send it with
-
-`
+// Send the command to the aircon unit
 aircon.sendAircoCommand(command);
-`
+```
 
-sendAircoCommand method sends the request and also updates all the relevant attributes based on the response from the AC unit. 
+The `sendAircoCommand` method sends the request and also updates all relevant attributes based on the response from the AC unit.
 
+---
 
-Useful commands for debugging:
+### Useful Commands for Debugging
 
-`
-//Prints out all the attributes in the aircon device. 
-aircon.printDeviceData(); 
-`
+```java
+// Prints out all the attributes in the aircon device
+aircon.printDeviceData();
+```
 
-----List of Operation Modes----
+---
 
-1 - Dry
+## List of Operation Modes
 
-2 - Cool
+| Mode | Description |
+|------|-------------|
+| 1    | Dry         |
+| 2    | Cool        |
+| 3    | Fan         |
+| 4    | Heat        |
 
-3 - fan
+---
 
-4 - heat
+## List of AirFlow Modes
 
-----List of AirFlows Modes----
+| Mode | Description |
+|------|-------------|
+| 0    | 1           |
+| 1    | 2           |
+| 2    | 3           |
+| 6    | 4           |
+| 7    | Auto        |
 
-0 - 1
+---
 
-1 - 2
+## List of `get`/`set` Methods and Available Attributes
 
-2 - 3
-
-6 - 4
-
-7 - auto
-
-----List of get/set methods and avialable attributes at this point----
-
-`
-
+```java
 // Gets the hostname of the aircon unit
 aircon.gethostname();
 
@@ -212,6 +217,4 @@ aircon.isminrefreshRate();
 
 // Sets the minimum refresh rate of the aircon unit
 aircon.setSelfCleanReset(long minrefreshRate);
-
-`
-
+```
