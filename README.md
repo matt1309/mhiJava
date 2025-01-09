@@ -46,18 +46,21 @@ sendAircoCommand method sends the request and also updates all the relevant attr
 
 
 Useful commands for debugging:
+
 `
 //Prints out all the attributes in the aircon device. 
 aircon.printDeviceData(); 
 `
 
 ----List of Operation Modes----
+
 1 - Dry
 2 - Cool
 3 - fan
 4 - heat
 
 ----List of AirFlows Modes----
+
 0 - 1
 1 - 2
 2 - 3
