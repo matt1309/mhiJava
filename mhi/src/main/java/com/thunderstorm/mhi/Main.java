@@ -4,7 +4,7 @@ import com.thunderstorm.mhi.AirCon;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        //System.out.println("Hello world!");
 
         // Create object
         AirCon aircon = new AirCon();
@@ -29,7 +29,7 @@ public class Main {
 
         try {
             // Get initial stats from aircon unit and parse into the aircon object.
-            System.out.println("Made it this far");
+           // System.out.println("Made it this far");
             aircon.getAirconStats(false);
 
             aircon.updateAccountInfo("Europe/London");
