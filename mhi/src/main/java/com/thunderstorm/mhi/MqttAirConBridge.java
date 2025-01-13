@@ -6,12 +6,12 @@ import org.eclipse.paho.client.mqttv3.*;
 
 public class MqttAirConBridge {
 
-    private static final String url;
-    private static final String clientID = "AirConClient";
-    private static final HashMap<String, String> topics;
-    private static final HashMap<String, String> boolTopics;
-    private static final HashMap<String, String> stringTopics;
-    private static final HashMap<String, String> floatTopics;
+    private static String url;
+    private static String clientID = "AirConClient";
+    private static HashMap<String, String> topics;
+    private static HashMap<String, String> boolTopics;
+    private static HashMap<String, String> stringTopics;
+    private static HashMap<String, String> floatTopics;
 
     private static final int interval = 5000; // 5 seconds
 
@@ -129,7 +129,7 @@ public class MqttAirConBridge {
             client.publish("device/outdoorTemperature", message);
         }
         if (aircon.getOperation() != null) {
-            MqttMessage message = new MqttMessage(aircon.getOperation().getBytes());
+            MqttMessage message = new MqttMessage(String.valueOf(aircon.getOperation()).getBytes());
             message.setQos(1);
             client.publish("device/operation", message);
         }
@@ -209,7 +209,7 @@ public class MqttAirConBridge {
             client.publish("device/selfCleanReset", message);
         }
         if (aircon.isnextRequestAfter() != null) {
-            MqttMessage message = new MqttMessage(aircon.isnextRequestAfter().getBytes());
+            MqttMessage message = new MqttMessage(String.valueOf(aircon.isnextRequestAfter()).getBytes());
             message.setQos(1);
             client.publish("device/nextRequestAfter", message);
         }
@@ -290,9 +290,7 @@ public class MqttAirConBridge {
             case "status":
                 aircon.setstatus(input);
                 break;
-            case "hi":
-                hi();
-                break;
+
             // Add more cases as needed
             default:
                 System.out.println("Unknown topic");
