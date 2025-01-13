@@ -50,6 +50,7 @@ public class Main {
 
             try {
                 MqttAirConBridge mqttService = new MqttAirConBridge(aircon, mqttHostname, aircon.getDeviceID());
+          
             } catch (Exception e) {
 
                 System.out.println(e.toString());
