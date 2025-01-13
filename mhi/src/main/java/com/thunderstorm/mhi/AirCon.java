@@ -42,6 +42,8 @@ public class AirCon {
     private String OperatorID;
     private String AirConID;
 
+    private MqttAirConBridge mqttService;
+
     boolean status;
     String firmware;
     int connectedAccounts;
@@ -68,6 +70,22 @@ public class AirCon {
 
     private LocalDateTime nextRequestAfter;
     private long minrefreshRate = 1L;
+
+
+
+    public boolean mqttStart(String mqttHostname){
+
+        try {
+            MqttAirConBridge mqttService = new MqttAirConBridge(this, mqttHostname, this.getDeviceID());
+      return true;
+        } catch (Exception e) {
+
+            System.out.println(e.toString());
+            return false;
+        }
+
+        
+    }
 
     // ----------------// Synchronised methods for getting and setting variables, to
     // add some basic level of thread safety. //----------------//
