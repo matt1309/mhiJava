@@ -80,9 +80,9 @@ public class MqttAirConBridge {
         new Thread(() -> {
             while (true) {
                 try {
-                    double temp = airCon.getTemp();
+                    double temp = airCon.getPresetTemp();
                     MqttMessage message = new MqttMessage(Double.toString(temp).getBytes());
-                    client.publish(TEMP_TOPIC, message);
+                    client.publish(floatTopics.get(temp), message);
                     System.out.println("Temperature sent to MQTT: " + temp);
                     Thread.sleep(interval);
                 } catch (Exception e) {
