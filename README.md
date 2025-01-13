@@ -37,6 +37,9 @@ Once the aircon is connected using the above, you can edit attributes using `get
 The `get`/`set` methods don't actually get data from the aircon unit; instead, they update the attributes stored in the aircon object. To send changes to the unit, generate the command and send it as follows:
 
 ```java
+//Edit the attributes you want to change using set methods
+aircon.setPresetTemp(21);
+
 // Generate the command
 String command = aircon.parser.toBase64();
 
