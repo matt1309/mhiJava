@@ -47,8 +47,16 @@ public class Main {
         if (args[0] == "mqtt") {
 
             String mqttHostname = args[1];
+            MqttAirConBridge mqttService;
 
-            aircon.mqttStart(aircon, mqttHostname, aircon.getDeviceID());
+            try{
+             mqttService = new MqttAirConBridge(aircon, mqttHostname, aircon.getDeviceID());
+             aircon.mqttStart(mqttHostname, mqttService);
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
+
+            
 
            
 

@@ -81,6 +81,7 @@ public class MqttAirConBridge {
             while (true) {
                 try {
 
+                    //move this to a function so it can be called easily. 
                     
                    // Publish each data point directly in the if conditions
         if (aircon.gethostname() != null && !aircon.gethostname().isEmpty()) {

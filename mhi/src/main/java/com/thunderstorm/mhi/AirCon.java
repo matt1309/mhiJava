@@ -71,12 +71,13 @@ public class AirCon {
     private LocalDateTime nextRequestAfter;
     private long minrefreshRate = 1L;
 
-
-
-    public boolean mqttStart(String mqttHostname){
+  
+    public boolean mqttStart(String mqttHostname,MqttAirConBridge mqttService){
 
         try {
-            MqttAirConBridge mqttService = new MqttAirConBridge(this, mqttHostname, this.getDeviceID());
+            this.mqttService = mqttService;
+            mqttService.startPublishing(this);
+           // mqttService.t
       return true;
         } catch (Exception e) {
 
