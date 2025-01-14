@@ -25,15 +25,18 @@ public class MqttAirConBridge {
         client = new MqttClient(url, clientID);
 
         //make sure things aren't null 
-        String baseTopic = "aircon/" + airCon.getAirConID() +"/";
-        stringTopics.put(baseTopic + "AirConID", "AirConID");
-        stringTopics.put(baseTopic + "hostname", "hostname");
-        stringTopics.put(baseTopic + "port", "port");
-        stringTopics.put(baseTopic + "deviceID", "DeviceID");
-        boolTopics.put(baseTopic + "status", "status");
-        floatTopics.put(baseTopic + "PresetTemp", "PresetTemp");
+        String baseTopicRead = "aircon/" + airCon.getAirConID() +"/sensor/";
+        String baseTopicWrite = "aircon/" + airCon.getAirConID() +"/actions/";
+        stringTopics.put(baseTopicRead + "AirConID", "AirConID");
+        stringTopics.put(baseTopicRead + "hostname", "hostname");
+        stringTopics.put(baseTopicRead + "port", "port");
+        stringTopics.put(baseTopicRead + "deviceID", "DeviceID");
+        boolTopics.put(baseTopicRead + "status", "status");
+        floatTopics.put(baseTopicWrite + "PresetTemp", "PresetTemp");
       
-
+        //to add the rest of the topics. and add a function to retrospectively add units after initialisation for library use more than anything. 
+        //change the mqtt implementation to be callback functions so that users can add their own functions to make it more generic. 
+        
 
 
 
@@ -96,144 +99,145 @@ public class MqttAirConBridge {
             while (true) {
                 try {
 
-                    String baseTopic = "aircon/" + airCon.getAirConID() +"/";
+                    String baseTopicRead = "aircon/" + airCon.getAirConID() +"/sensor/";
+                    String baseTopicWrite = "aircon/" + airCon.getAirConID() +"/actions/";
                     //move this to a function so it can be called easily. 
                     
                    // Publish each data point directly in the if conditions
         if (aircon.gethostname() != null && !aircon.gethostname().isEmpty()) {
             MqttMessage message = new MqttMessage(aircon.gethostname().getBytes());
             message.setQos(1); // QoS 1 ensures the message is delivered at least once
-            client.publish(baseTopic + "hostname", message);
+            client.publish(baseTopicRead + "hostname", message);
         }
         if (aircon.getport() != null && !aircon.getport().isEmpty()) {
             MqttMessage message = new MqttMessage(aircon.getport().getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "port", message);
+            client.publish(baseTopicRead + "port", message);
         }
         if (aircon.getDeviceID() != null && !aircon.getDeviceID().isEmpty()) {
             MqttMessage message = new MqttMessage(aircon.getDeviceID().getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/deviceID", message);
+            client.publish(baseTopicRead + "/deviceID", message);
         }
         if (aircon.getOperatorID() != null && !aircon.getOperatorID().isEmpty()) {
             MqttMessage message = new MqttMessage(aircon.getOperatorID().getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/operatorID", message);
+            client.publish(baseTopicRead + "/operatorID", message);
         }
         if (aircon.getAirConID() != null && !aircon.getAirConID().isEmpty()) {
             MqttMessage message = new MqttMessage(aircon.getAirConID().getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/airConID", message);
+            client.publish(baseTopicRead + "/airConID", message);
         }
         if (aircon.getstatus()) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getstatus()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/status", message);
+            client.publish(baseTopicRead + "/status", message);
         }
         if (aircon.getfirmware() != null && !aircon.getfirmware().isEmpty()) {
             MqttMessage message = new MqttMessage(aircon.getfirmware().getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/firmware", message);
+            client.publish(baseTopicRead + "/firmware", message);
         }
         if (aircon.getconnectedAccounts() != 0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getconnectedAccounts()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/connectedAccounts", message);
+            client.publish(baseTopicRead + "/connectedAccounts", message);
         }
         if (aircon.getOutdoorTemperature()) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getOutdoorTemperature()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/outdoorTemperature", message);
+            client.publish(baseTopicRead + "/outdoorTemperature", message);
         }
         if (aircon.getOperation() != null) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getOperation()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/operation", message);
+            client.publish(baseTopicWrite + "/operation", message);
         }
         if (aircon.getOperationMode() != 0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getOperationMode()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/operationMode", message);
+            client.publish(baseTopicWrite + "/operationMode", message);
         }
         if (aircon.getAirFlow() != 0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getAirFlow()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/airFlow", message);
+            client.publish(baseTopicWrite + "/airFlow", message);
         }
         if (aircon.getWindDirectionUD() != 0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getWindDirectionUD()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/windDirectionUD", message);
+            client.publish(baseTopicWrite + "/windDirectionUD", message);
         }
         if (aircon.getWindDirectionLR() != 0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getWindDirectionLR()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/windDirectionLR", message);
+            client.publish(baseTopicWrite + "/windDirectionLR", message);
         }
         if (aircon.getPresetTemp() != 0.0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getPresetTemp()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/presetTemp", message);
+            client.publish(baseTopicWrite + "/presetTemp", message);
         }
         if (aircon.getEntrust()) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getEntrust()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/entrust", message);
+            client.publish(baseTopicRead + "/entrust", message);
         }
         if (aircon.getModelNr() != 0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getModelNr()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/modelNr", message);
+            client.publish(baseTopicRead + "/modelNr", message);
         }
         if (aircon.getVacant()) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getVacant()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/vacant", message);
+            client.publish(baseTopicRead + "/vacant", message);
         }
         if (aircon.getCoolHotJudge()) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getCoolHotJudge()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/coolHotJudge", message);
+            client.publish(baseTopicRead + "/coolHotJudge", message);
         }
         if (aircon.getIndoorTemp() != 0.0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getIndoorTemp()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/indoorTemp", message);
+            client.publish(baseTopicRead + "/indoorTemp", message);
         }
         if (aircon.getOutdoorTemp() != 0.0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getOutdoorTemp()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/outdoorTemp", message);
+            client.publish(baseTopicRead + "/outdoorTemp", message);
         }
         if (aircon.getElectric() != 0.0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.getElectric()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/electric", message);
+            client.publish(baseTopicRead + "/electric", message);
         }
         if (aircon.getErrorCode() != null && !aircon.getErrorCode().isEmpty()) {
             MqttMessage message = new MqttMessage(aircon.getErrorCode().getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/errorCode", message);
+            client.publish(baseTopicRead + "/errorCode", message);
         }
         if (aircon.isSelfCleanOperation()) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.isSelfCleanOperation()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/selfCleanOperation", message);
+            client.publish(baseTopicWrite + "/selfCleanOperation", message);
         }
         if (aircon.isSelfCleanReset()) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.isSelfCleanReset()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/selfCleanReset", message);
+            client.publish(baseTopicWrite + "/selfCleanReset", message);
         }
         if (aircon.isnextRequestAfter() != null) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.isnextRequestAfter()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/nextRequestAfter", message);
+            client.publish(baseTopicRead + "/nextRequestAfter", message);
         }
         if (aircon.isminrefreshRate() != 0) {
             MqttMessage message = new MqttMessage(String.valueOf(aircon.isminrefreshRate()).getBytes());
             message.setQos(1);
-            client.publish(baseTopic + "/minRefreshRate", message);
+            client.publish(baseTopicWrite + "/minRefreshRate", message);
         }
 
 
