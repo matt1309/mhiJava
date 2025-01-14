@@ -62,6 +62,10 @@ public class Main {
 
         }
 
+
+        System.out.println("Aircon ID: " + aircon.getAirConID());
+
+
         /*
          * 
          * 
