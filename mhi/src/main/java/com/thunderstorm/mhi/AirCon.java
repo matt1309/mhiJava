@@ -583,6 +583,11 @@ public class AirCon {
         try {
             AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
             AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
+            if(mqttService != null){
+
+                mqttService.publishNow(this);
+            }
+            
             return true;
         } catch (Exception e) {
             System.out.println("Failed to translate response");
@@ -600,6 +605,10 @@ public class AirCon {
         try {
             AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
             AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
+            if(mqttService != null){
+
+                mqttService.publishNow(this);
+            }
             return true;
         } catch (Exception e) {
             System.out.println("Failed to translate response");
