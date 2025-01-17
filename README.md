@@ -7,6 +7,13 @@ Heavily inspired/ported from the Home Assistant addon:
 
 ---
 
+## Coming Soon:
+
+Optional MQTT bridge functionality to allow users to forward data to MQTT and also receive aircon commands via mqtt. 
+
+---
+
+
 ## How to Use
 
 Include the `AirCon.java` class in your project.
