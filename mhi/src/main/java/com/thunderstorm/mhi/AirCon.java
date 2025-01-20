@@ -565,7 +565,8 @@ public class AirCon {
         contents.put("airconId", AirConID);
         contents.put("remote", 0);
         contents.put("timezone", timeZone);
-        JSONObject result = post("updateAccountInfo", contents);
+        //JSONObject result = post("updateAccountInfo", contents);
+        post("updateAccountInfo", contents);
         return true;
     }
 

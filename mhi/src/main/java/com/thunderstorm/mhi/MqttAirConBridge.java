@@ -8,7 +8,7 @@ public class MqttAirConBridge {
 
     private String url;
     private String clientID = "AirConClient";
-    private static HashMap<String, String> topics;
+  //  private static HashMap<String, String> topics;
     private static HashMap<String, String> boolTopics;
     private static HashMap<String, String> stringTopics;
     private static HashMap<String, String> floatTopics;
