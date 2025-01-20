@@ -7,14 +7,77 @@ Heavily inspired/ported from the Home Assistant addon:
 
 ---
 
-## How to Use
+## Coming Soon:
 
-Include the `AirCon.java` class in your project.
+Optional MQTT bridge functionality to allow users to forward data to MQTT and also receive aircon commands via mqtt. 
 
-### Initialization and First Connection
+---
+ 
+## Installation
+
+To use this library in your project, follow the steps below:
+
+### 1. Add the Maven Dependency
+
+To integrate this library into your project, add the following dependencies to your `pom.xml` file:
+
+```xml
+  <!-- Apache HttpClient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.14</version>
+        </dependency>
+
+        <!-- JSON Library -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20230227</version>
+        </dependency>
+
+        <!-- SLF4J (Optional, for better logging) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+<!-- MQTT Client -->
+<dependency>
+    <groupId>org.eclipse.paho</groupId>
+    <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+    <version>1.2.5</version>
+</dependency>
+``` 
+### 3. Install the Library Locally
+
+To install the library locally for testing or development purposes, copy the AirCon.java and MqttAirConBridge.java class files into your project
+
+## Usage
+
+Once the library is added to your project, you can start using it by importing the necessary classes and invoking methods from the library.
+
+### 1. Import the Library
+
+In your Java code, import the relevant class:
 
 ```java
-// Create object
+import com.example.yourlibrary.AirCon;
+```
+
+### 2. Using the Library
+
+Now you can instantiate and use the methods from the library. For example:
+
+```java
+public class Example {
+    public static void main(String[] args) {
+        // Create object
 AirCon aircon = new AirCon();
 
 // Set hostname and port.
@@ -28,6 +91,8 @@ aircon.getAirconStats(false);
 
 // Add user account using the information stored in aircon object already
 aircon.updateAccountInfo("Europe/London");
+    }
+}
 ```
 
 Once the aircon is connected using the above, you can edit attributes using `get` and `set` methods (a complete list of available methods is noted below). 
