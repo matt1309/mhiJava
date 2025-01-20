@@ -123,7 +123,7 @@ public class MqttAirConBridge {
                     try {
                         // sending command to the aircon unit itself
                         airCon.sendAircoCommand(command);
-                        airCon.printDeviceData();
+                        //airCon.printDeviceData();
                         publishNow(airCon);
                     } catch (Exception e) {
 
@@ -355,7 +355,7 @@ public class MqttAirConBridge {
 
     public static void handleTopicInt(AirCon aircon, String topic, int input) {
 
-        String topicClean = topic.substring(10); // change depending on how long the intial ids are in topics.
+        String topicClean = intTopics.get(topic); // change depending on how long the intial ids are in topics.
 
         switch (topicClean) {
             case "airFlow":
@@ -382,7 +382,7 @@ public class MqttAirConBridge {
 
     public static void handleTopicString(AirCon aircon, String topic, String input) {
 
-        String topicClean = topic.substring(10); // change depending on how long the intial ids are in topics.
+        String topicClean = stringTopics.get(topic); // change depending on how long the intial ids are in topics.
 
         /*
          * private String hostname;
@@ -421,7 +421,7 @@ public class MqttAirConBridge {
 
     public static void handleTopicBool(AirCon aircon, String topic, Boolean input) {
 
-        String topicClean = topic.substring(10); // change depending on how long the intial ids are in topics.
+        String topicClean = boolTopics.get(topic); // change depending on how long the intial ids are in topics.
 
         switch (topicClean) {
             case "status":

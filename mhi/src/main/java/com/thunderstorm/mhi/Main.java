@@ -60,7 +60,7 @@ public class Main {
                     try {
                         System.out.println("checking in with aircon unit " + aircon.getAirConID());
                         aircon.getAirconStats(false);
-                       // mqttService.publishNow(aircon);
+                        mqttService.publishNow(aircon);
                         System.out.println("Sleeping");
     
                         Thread.sleep(100000);
