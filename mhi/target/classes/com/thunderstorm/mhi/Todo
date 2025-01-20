@@ -1,3 +1,2 @@
-Add topic generator in MqttAirConBridge class to tell it what topics to listen to 
-Decide on a topic structure
+Implement safety features for statically allowed entries. 
 Implement the use of settings files so can run as a service. ie json object for each unit, settings read by this program running as a service. 
