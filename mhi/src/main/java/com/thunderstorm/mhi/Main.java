@@ -14,6 +14,7 @@ public class Main {
         aircon.setport("51443");
         aircon.setDeviceID("e8165615c7d6");
         aircon.setOperatorID("openhab");
+        
 
         /*
          * this.command = command; // "getAirconStat"
@@ -44,27 +45,52 @@ public class Main {
             System.out.println(e.toString());
         }
 
-        if (args[0] == "mqtt") {
+       // if (args[0] == "mqtt") {
 
-            String mqttHostname = args[1];
+           // String mqttHostname = args[1];
+           String mqttHostname = "tcp://192.168.0.101";
             MqttAirConBridge mqttService;
 
             try{
-             mqttService = new MqttAirConBridge(aircon, mqttHostname, aircon.getDeviceID());
-             aircon.mqttStart(mqttHostname, mqttService);
+             mqttService = new MqttAirConBridge(aircon, mqttHostname, aircon.getDeviceID(),5000,"openhab", "");
+            // aircon.mqttStart(mqttHostname, mqttService);
+
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        System.out.println("checking in with aircon unit " + aircon.getAirConID());
+                        aircon.getAirconStats(false);
+                       // mqttService.publishNow(aircon);
+                        System.out.println("Sleeping");
+    
+                        Thread.sleep(100000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+    
+
+
+
+
+            //mqttService.startPublishing(aircon);
         }catch (Exception e){
             System.out.println(e.toString());
         }
 
-            
+       //}     
 
            
-
-        }
+        
 
 
         System.out.println("Aircon ID: " + aircon.getAirConID());
 
+
+
+
+       
 
         /*
          * 
