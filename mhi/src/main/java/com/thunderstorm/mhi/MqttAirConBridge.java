@@ -17,11 +17,11 @@ public class MqttAirConBridge {
     private static int interval = 5000; // 5 seconds
 
     private MqttClient client;
-    private AirCon airCon;
+    //private AirCon airCon;
 
     public MqttAirConBridge(AirCon airCon, String url, String clientID, int interval, String username, String password)
             throws MqttException {
-        this.airCon = airCon;
+      //  this.airCon = airCon;
         this.url = url;
         this.clientID = clientID;
         this.interval = interval;
@@ -161,8 +161,8 @@ public class MqttAirConBridge {
 
             System.out.println("Publishing data");
 
-            String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
-            String baseTopicWrite = "aircon/" + airCon.getAirConID() + "/ReadWrite/";
+            String baseTopicRead = "aircon/" + aircon.getAirConID() + "/ReadOnly/";
+            String baseTopicWrite = "aircon/" + aircon.getAirConID() + "/ReadWrite/";
             // move this to a function so it can be called easily.
 
             // Publish each data point directly in the if conditions

@@ -1,2 +1,5 @@
 Implement safety features for statically allowed entries. 
 Implement the use of settings files so can run as a service. ie json object for each unit, settings read by this program running as a service. 
+
+
+Need to store aircon objects in MQTT so it can update the object. so i need a concurrent
