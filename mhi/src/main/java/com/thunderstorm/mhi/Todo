@@ -2,10 +2,7 @@ Implement safety features for statically allowed entries.
 Implement the use of settings files so can run as a service. ie json object for each unit, settings read by this program running as a service. 
 
 
-Need to add support for multiple aircon units with one service.
+Need to add support for multiple aircon units with one service. (almost done)
 
 Pass in a list of aircon units into constructor and change the layout of handleTopics functions so that aircon ID's are used. 
 
-
-
-Fix add topics 

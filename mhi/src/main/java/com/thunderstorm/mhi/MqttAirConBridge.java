@@ -1,8 +1,11 @@
 package com.thunderstorm.mhi;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.paho.client.mqttv3.*;
@@ -41,7 +44,7 @@ public class MqttAirConBridge {
 
         //airCons.put(airCon.getAirConID(), airCon);
         // make sure things aren't null
-        airCons.forEach((key, value) -> addTopics(value));
+      //  
 /*
         String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
         String baseTopicWrite = "aircon/" + airCon.getAirConID() + "/ReadWrite/";
@@ -92,6 +95,7 @@ public class MqttAirConBridge {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
 
                 Boolean changesMade = false;
+                Set<String> airConsChanged = new HashSet<String>();
 
                 if (floatTopics.containsKey(topic) && (floatTopics.get(topic) != null)) {
 
@@ -99,6 +103,8 @@ public class MqttAirConBridge {
                     handleTopicFloat(topic, val);
                     System.out.println("Float values received from: " + topic + " with value: " + val);
                     changesMade = true;
+                    airConsChanged.add((floatTopics.get(topic)).get(0));
+                    
                 }
 
                 if (stringTopics.containsKey(topic) && (stringTopics.get(topic) != null)) {
@@ -107,6 +113,7 @@ public class MqttAirConBridge {
                     handleTopicString(topic, val);
                     System.out.println("String value received from: " + topic + " with value: " + val);
                     changesMade = true;
+                    airConsChanged.add((floatTopics.get(topic)).get(0));
 
                 }
 
@@ -116,6 +123,7 @@ public class MqttAirConBridge {
                     handleTopicBool(topic, val);
                     System.out.println("Boolean values received from: " + topic + " with value: " + val);
                     changesMade = true;
+                    airConsChanged.add((floatTopics.get(topic)).get(0));
                 }
 
                 if (intTopics.containsKey(topic) && (boolTopics.get(topic) != null)) {
@@ -124,21 +132,14 @@ public class MqttAirConBridge {
                     handleTopicInt(topic, val);
                     System.out.println("Int values received from: " + topic + " with value: " + val);
                     changesMade = true;
+                    airConsChanged.add((floatTopics.get(topic)).get(0));
                 }
 
                 if (changesMade) {
 
-                    String command = airCon.parser.toBase64();
 
-                    try {
-                        // sending command to the aircon unit itself
-                        airCon.sendAircoCommand(command);
-                        //airCon.printDeviceData();
-                        publishNow(airCon);
-                    } catch (Exception e) {
-
-                        System.out.println(e.toString());
-                    }
+            updateAirCon(airConsChanged);
+                    
 
                 }
             }
@@ -149,6 +150,15 @@ public class MqttAirConBridge {
             }
         });
         client.connect(options);
+
+        if(airCons.size() == 0){
+
+            addTopics(airCon);
+        }else{
+        airCons.forEach((key, value) -> addTopics(value));
+        }
+
+        /*
 
         for (String key : floatTopics.keySet()) {
 
@@ -163,8 +173,35 @@ public class MqttAirConBridge {
 
             client.subscribe(key);
         }
+            */
     }
 
+
+
+    public void updateAirCon(Set<String> airConIDs) {
+
+
+        for(String airconID : airConIDs){
+
+        AirCon aircon = airCons.get(airconID);
+        String command = aircon.parser.toBase64();
+
+        try {
+            // sending command to the aircon unit itself
+            aircon.sendAircoCommand(command);
+            //airCon.printDeviceData();
+            publishNow(aircon);
+        } catch (Exception e) {
+
+            System.out.println(e.toString());
+        }
+    }
+
+
+
+
+
+    }
 
     public void addTopics(AirCon airCon) {
 
@@ -229,6 +266,10 @@ public class MqttAirConBridge {
                 client.subscribe(key);
             }
             for (String key : newstringTopics.keySet()) {
+    
+                client.subscribe(key);
+            }
+            for (String key : newintTopics.keySet()) {
     
                 client.subscribe(key);
             }
@@ -418,8 +459,8 @@ public class MqttAirConBridge {
 
     public static void handleTopicFloat(String topic, float input) {
 
-        String topicClean = stringTopics.get(topic).get(1);
-        String airconID = stringTopics.get(topic).get(0);
+        String topicClean = (floatTopics.get(topic)).get(1);
+        String airconID = (floatTopics.get(topic)).get(0);
         
         AirCon aircon = airCons.get(airconID);
         
@@ -451,8 +492,8 @@ public class MqttAirConBridge {
 
     public static void handleTopicInt(String topic, int input) {
 
-        String topicClean = stringTopics.get(topic).get(1);
-        String airconID = stringTopics.get(topic).get(0);
+        String topicClean = intTopics.get(topic).get(1);
+        String airconID = intTopics.get(topic).get(0);
         
        AirCon aircon = airCons.get(airconID); // change depending on how long the intial ids are in topics.
 
@@ -526,8 +567,8 @@ public class MqttAirConBridge {
     public static void handleTopicBool(String topic, Boolean input) {
 
                
-        String topicClean = stringTopics.get(topic).get(1);
-        String airconID = stringTopics.get(topic).get(0);
+        String topicClean = boolTopics.get(topic).get(1);
+        String airconID = boolTopics.get(topic).get(0);
         
         AirCon aircon = airCons.get(airconID);
         
