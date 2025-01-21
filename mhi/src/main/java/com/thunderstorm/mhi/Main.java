@@ -14,16 +14,17 @@ public class Main {
     public static void main(String[] args) {
         // System.out.println("Hello world!");
 
-        // Create object
-
+        // Create list of aircons
         List<AirCon> aircons = new ArrayList<AirCon>();
         // AirCon aircon = new AirCon();
         StringBuilder jsonContent = new StringBuilder();
 
+        //checks for settings file
         String settingsFilePath = "settings.json";
         File settingsFile = new File(settingsFilePath);
 
         if (settingsFile.exists()) {
+            //if settings file read from it
             try {
                 Scanner scanner = new Scanner(settingsFile);
                 // StringBuilder jsonContent = new StringBuilder();
@@ -56,7 +57,7 @@ public class Main {
             }
 
         } else {
-
+            //if no settings file then only one Aircon unit can be added at one time via input args to do this section.
             AirCon aircon = new AirCon();
 
 
@@ -73,7 +74,7 @@ public class Main {
         }
 
         
-
+        //loop each aircon to get the data. 
         for (AirCon aircon : aircons) {
 
             try {
@@ -98,6 +99,8 @@ public class Main {
         // if (args[0] == "mqtt") {
 
         // String mqttHostname = args[1];
+
+        //setup mqtt to read settings files is on the todo list. else use input args again. 
         String mqttHostname = "tcp://192.168.0.101";
         MqttAirConBridge mqttService;
 
