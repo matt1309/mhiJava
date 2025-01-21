@@ -1,6 +1,9 @@
 package com.thunderstorm.mhi;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.paho.client.mqttv3.*;
 
@@ -9,19 +12,22 @@ public class MqttAirConBridge {
     private String url;
     private String clientID = "AirConClient";
     // private static HashMap<String, String> topics;
-    private static HashMap<String, String> boolTopics = new HashMap<String, String>();
-    private static HashMap<String, String> stringTopics = new HashMap<String, String>();
-    private static HashMap<String, String> floatTopics = new HashMap<String, String>();
-    private static HashMap<String, String> intTopics = new HashMap<String, String>();
+    private static ConcurrentHashMap<String, List<String>> boolTopics = new ConcurrentHashMap<String, List<String>>();
+    private static ConcurrentHashMap<String, List<String>> stringTopics = new ConcurrentHashMap<String, List<String>>();
+    private static ConcurrentHashMap<String, List<String>> floatTopics = new ConcurrentHashMap<String, List<String>>();
+    private static ConcurrentHashMap<String, List<String>> intTopics = new ConcurrentHashMap<String, List<String>>();
+    private static ConcurrentHashMap<String, AirCon> airCons = new ConcurrentHashMap<String, AirCon>();
 
     private static int interval = 5000; // 5 seconds
 
-    private MqttClient client;
+    private MqttClient client; //to make this thread safe with locks
     //private AirCon airCon;
 
     public MqttAirConBridge(AirCon airCon, String url, String clientID, int interval, String username, String password)
             throws MqttException {
       //  this.airCon = airCon;
+
+     // airCons.put(airCon.getAirConID(), airCon);
         this.url = url;
         this.clientID = clientID;
         this.interval = interval;
@@ -33,44 +39,48 @@ public class MqttAirConBridge {
             options.setPassword(password.toCharArray());
         }
 
+        //airCons.put(airCon.getAirConID(), airCon);
         // make sure things aren't null
+        airCons.forEach((key, value) -> addTopics(value));
+/*
         String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
         String baseTopicWrite = "aircon/" + airCon.getAirConID() + "/ReadWrite/";
 
         // String topics
-        stringTopics.put(baseTopicWrite + "AirConID", "AirConID");
-        stringTopics.put(baseTopicWrite + "hostname", "hostname");
-        stringTopics.put(baseTopicWrite + "port", "port");
-        stringTopics.put(baseTopicWrite + "deviceID", "DeviceID");
-        stringTopics.put(baseTopicWrite + "errorCode", "errorCode");
+        stringTopics.put(baseTopicWrite + "AirConID", Arrays.asList(airCon.getAirConID(),"AirConID"));
+        stringTopics.put(baseTopicWrite + "hostname", Arrays.asList(airCon.getAirConID(),"hostname"));
+        stringTopics.put(baseTopicWrite + "port", Arrays.asList(airCon.getAirConID(),"port"));
+        stringTopics.put(baseTopicWrite + "deviceID", Arrays.asList(airCon.getAirConID(),"DeviceID"));
+        stringTopics.put(baseTopicWrite + "errorCode", Arrays.asList(airCon.getAirConID(),"errorCode"));
 
         // Boolean topics
-        boolTopics.put(baseTopicWrite + "status", "status");
-        boolTopics.put(baseTopicWrite + "entrust", "entrust");
-        boolTopics.put(baseTopicWrite + "vacant", "vacant");
-        boolTopics.put(baseTopicWrite + "coolHotJudge", "coolHotJudge");
-        boolTopics.put(baseTopicWrite + "selfCleanOperation", "selfCleanOperation");
-        boolTopics.put(baseTopicWrite + "selfCleanReset", "selfCleanReset");
+        boolTopics.put(baseTopicWrite + "status", Arrays.asList(airCon.getAirConID(),"status"));
+        boolTopics.put(baseTopicWrite + "entrust", Arrays.asList(airCon.getAirConID(),"entrust"));
+        boolTopics.put(baseTopicWrite + "vacant", Arrays.asList(airCon.getAirConID(),"vacant"));
+        boolTopics.put(baseTopicWrite + "coolHotJudge", Arrays.asList(airCon.getAirConID(),"coolHotJudge"));
+        boolTopics.put(baseTopicWrite + "selfCleanOperation", Arrays.asList(airCon.getAirConID(),"selfCleanOperation"));
+        boolTopics.put(baseTopicWrite + "selfCleanReset", Arrays.asList(airCon.getAirConID(),"selfCleanReset"));
 
         // Float topics
-        floatTopics.put(baseTopicWrite + "presetTemp", "PresetTemp");
-        floatTopics.put(baseTopicWrite + "indoorTemp", "indoorTemp");
-        floatTopics.put(baseTopicWrite + "outdoorTemp", "outdoorTemp");
-        floatTopics.put(baseTopicWrite + "electric", "electric");
+        floatTopics.put(baseTopicWrite + "presetTemp", Arrays.asList(airCon.getAirConID(),"PresetTemp"));
+        floatTopics.put(baseTopicWrite + "indoorTemp", Arrays.asList(airCon.getAirConID(),"indoorTemp"));
+        floatTopics.put(baseTopicWrite + "outdoorTemp", Arrays.asList(airCon.getAirConID(),"outdoorTemp"));
+        floatTopics.put(baseTopicWrite + "electric", Arrays.asList(airCon.getAirConID(),"electric"));
 
         // int Topics
-        intTopics.put(baseTopicWrite + "airFlow", "airFlow");
-        intTopics.put(baseTopicWrite + "windDirectionUD", "windDirectionUD");
-        intTopics.put(baseTopicWrite + "windDirectionLR", "windDirectionLR");
+        intTopics.put(baseTopicWrite + "airFlow", Arrays.asList(airCon.getAirConID(),"airFlow"));
+        intTopics.put(baseTopicWrite + "windDirectionUD", Arrays.asList(airCon.getAirConID(),"windDirectionUD"));
+        intTopics.put(baseTopicWrite + "windDirectionLR", Arrays.asList(airCon.getAirConID(),"windDirectionLR"));
 
         // Operation topics
-        boolTopics.put(baseTopicWrite + "operation", "operation");
-        floatTopics.put(baseTopicWrite + "operationMode", "operationMode");
+        boolTopics.put(baseTopicWrite + "operation", Arrays.asList(airCon.getAirConID(),"operation"));
+        floatTopics.put(baseTopicWrite + "operationMode", Arrays.asList(airCon.getAirConID(),"operationMode"));
 
         // to add the rest of the topics. and add a function to retrospectively add
         // units after initialisation for library use more than anything.
         // change the mqtt implementation to be callback functions so that users can add
         // their own functions to make it more generic.
+        */
 
         client.setCallback(new MqttCallback() {
             @Override
@@ -86,7 +96,7 @@ public class MqttAirConBridge {
                 if (floatTopics.containsKey(topic) && (floatTopics.get(topic) != null)) {
 
                     float val = Float.parseFloat(new String(message.getPayload()));
-                    handleTopicFloat(airCon, topic, val);
+                    handleTopicFloat(topic, val);
                     System.out.println("Float values received from: " + topic + " with value: " + val);
                     changesMade = true;
                 }
@@ -94,7 +104,7 @@ public class MqttAirConBridge {
                 if (stringTopics.containsKey(topic) && (stringTopics.get(topic) != null)) {
 
                     String val = new String(message.getPayload());
-                    handleTopicString(airCon, topic, val);
+                    handleTopicString(topic, val);
                     System.out.println("String value received from: " + topic + " with value: " + val);
                     changesMade = true;
 
@@ -103,7 +113,7 @@ public class MqttAirConBridge {
                 if (boolTopics.containsKey(topic) && (boolTopics.get(topic) != null)) {
 
                     Boolean val = Boolean.parseBoolean(new String(message.getPayload()));
-                    handleTopicBool(airCon, topic, val);
+                    handleTopicBool(topic, val);
                     System.out.println("Boolean values received from: " + topic + " with value: " + val);
                     changesMade = true;
                 }
@@ -111,7 +121,7 @@ public class MqttAirConBridge {
                 if (intTopics.containsKey(topic) && (boolTopics.get(topic) != null)) {
 
                     int val = Integer.parseInt(new String(message.getPayload()));
-                    handleTopicInt(airCon, topic, val);
+                    handleTopicInt(topic, val);
                     System.out.println("Int values received from: " + topic + " with value: " + val);
                     changesMade = true;
                 }
@@ -154,6 +164,87 @@ public class MqttAirConBridge {
             client.subscribe(key);
         }
     }
+
+
+    public void addTopics(AirCon airCon) {
+
+
+
+        airCons.put(airCon.getAirConID(), airCon);
+        // make sure things aren't null
+        String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
+        String baseTopicWrite = "aircon/" + airCon.getAirConID() + "/ReadWrite/";
+        
+        HashMap<String,List<String>> newstringTopics = new HashMap<String, List<String>>();
+        HashMap<String,List<String>> newboolTopics = new HashMap<String, List<String>>();
+        HashMap<String,List<String>> newfloatTopics = new HashMap<String, List<String>>();
+        HashMap<String,List<String>> newintTopics = new HashMap<String, List<String>>();
+
+
+        // String topics
+        newstringTopics.put(baseTopicWrite + "AirConID", Arrays.asList(airCon.getAirConID(),"AirConID"));
+        newstringTopics.put(baseTopicWrite + "hostname", Arrays.asList(airCon.getAirConID(),"hostname"));
+        newstringTopics.put(baseTopicWrite + "port", Arrays.asList(airCon.getAirConID(),"port"));
+        newstringTopics.put(baseTopicWrite + "deviceID", Arrays.asList(airCon.getAirConID(),"DeviceID"));
+        newstringTopics.put(baseTopicWrite + "errorCode", Arrays.asList(airCon.getAirConID(),"errorCode"));
+
+
+        // Boolean topics
+        newboolTopics.put(baseTopicWrite + "status", Arrays.asList(airCon.getAirConID(),"status"));
+        newboolTopics.put(baseTopicWrite + "entrust", Arrays.asList(airCon.getAirConID(),"entrust"));
+        newboolTopics.put(baseTopicWrite + "vacant", Arrays.asList(airCon.getAirConID(),"vacant"));
+        newboolTopics.put(baseTopicWrite + "coolHotJudge", Arrays.asList(airCon.getAirConID(),"coolHotJudge"));
+        newboolTopics.put(baseTopicWrite + "selfCleanOperation", Arrays.asList(airCon.getAirConID(),"selfCleanOperation"));
+        newboolTopics.put(baseTopicWrite + "selfCleanReset", Arrays.asList(airCon.getAirConID(),"selfCleanReset"));
+
+        // Float topics
+        newfloatTopics.put(baseTopicWrite + "presetTemp", Arrays.asList(airCon.getAirConID(),"PresetTemp"));
+        newfloatTopics.put(baseTopicWrite + "indoorTemp", Arrays.asList(airCon.getAirConID(),"indoorTemp"));
+        newfloatTopics.put(baseTopicWrite + "outdoorTemp", Arrays.asList(airCon.getAirConID(),"outdoorTemp"));
+        newfloatTopics.put(baseTopicWrite + "electric", Arrays.asList(airCon.getAirConID(),"electric"));
+
+        // int Topics
+        newintTopics.put(baseTopicWrite + "airFlow", Arrays.asList(airCon.getAirConID(),"airFlow"));
+        newintTopics.put(baseTopicWrite + "windDirectionUD", Arrays.asList(airCon.getAirConID(),"windDirectionUD"));
+        newintTopics.put(baseTopicWrite + "windDirectionLR", Arrays.asList(airCon.getAirConID(),"windDirectionLR"));
+
+        // Operation topics
+        newboolTopics.put(baseTopicWrite + "operation", Arrays.asList(airCon.getAirConID(),"operation"));
+        newfloatTopics.put(baseTopicWrite + "operationMode", Arrays.asList(airCon.getAirConID(),"operationMode"));
+
+        stringTopics.putAll(newstringTopics);
+        floatTopics.putAll(newfloatTopics);
+        boolTopics.putAll(newboolTopics);
+        intTopics.putAll(newintTopics);
+
+
+        try{
+            for (String key : newfloatTopics.keySet()) {
+
+                client.subscribe(key);
+            }
+    
+            for (String key : newboolTopics.keySet()) {
+    
+                client.subscribe(key);
+            }
+            for (String key : newstringTopics.keySet()) {
+    
+                client.subscribe(key);
+            }
+
+            
+        } catch (Exception e){
+
+            System.out.println("Error: " + e.toString());
+        }
+
+
+
+    }
+
+
+
 
     public void publishNow(AirCon aircon) {
 
@@ -325,9 +416,14 @@ public class MqttAirConBridge {
         }).start();
     }
 
-    public static void handleTopicFloat(AirCon aircon, String topic, float input) {
+    public static void handleTopicFloat(String topic, float input) {
 
-        String topicClean = floatTopics.get(topic); // change depending on how long the intial ids are in topics.
+        String topicClean = stringTopics.get(topic).get(1);
+        String airconID = stringTopics.get(topic).get(0);
+        
+        AirCon aircon = airCons.get(airconID);
+        
+        // change depending on how long the intial ids are in topics.
 
         switch (topicClean) {
             case "PresetTemp":
@@ -353,9 +449,12 @@ public class MqttAirConBridge {
         }
     }
 
-    public static void handleTopicInt(AirCon aircon, String topic, int input) {
+    public static void handleTopicInt(String topic, int input) {
 
-        String topicClean = intTopics.get(topic); // change depending on how long the intial ids are in topics.
+        String topicClean = stringTopics.get(topic).get(1);
+        String airconID = stringTopics.get(topic).get(0);
+        
+       AirCon aircon = airCons.get(airconID); // change depending on how long the intial ids are in topics.
 
         switch (topicClean) {
             case "airFlow":
@@ -380,9 +479,14 @@ public class MqttAirConBridge {
         }
     }
 
-    public static void handleTopicString(AirCon aircon, String topic, String input) {
+    public static void handleTopicString(String topic, String input) {
 
-        String topicClean = stringTopics.get(topic); // change depending on how long the intial ids are in topics.
+        String topicClean = stringTopics.get(topic).get(1);
+        String airconID = stringTopics.get(topic).get(0);
+        
+       AirCon aircon = airCons.get(airconID);
+        
+        // change depending on how long the intial ids are in topics.
 
         /*
          * private String hostname;
@@ -419,9 +523,16 @@ public class MqttAirConBridge {
         }
     }
 
-    public static void handleTopicBool(AirCon aircon, String topic, Boolean input) {
+    public static void handleTopicBool(String topic, Boolean input) {
 
-        String topicClean = boolTopics.get(topic); // change depending on how long the intial ids are in topics.
+               
+        String topicClean = stringTopics.get(topic).get(1);
+        String airconID = stringTopics.get(topic).get(0);
+        
+        AirCon aircon = airCons.get(airconID);
+        
+        // change depending on how long the intial ids are in topics.
+
 
         switch (topicClean) {
             case "status":
