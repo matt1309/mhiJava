@@ -1,5 +1,13 @@
 package com.thunderstorm.mhi;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.thunderstorm.mhi.AirCon;
 
 public class Main {
@@ -7,14 +15,82 @@ public class Main {
         // System.out.println("Hello world!");
 
         // Create object
-        AirCon aircon = new AirCon();
+
+        List<AirCon> aircons = new ArrayList<AirCon>();
+        //AirCon aircon = new AirCon();
+        StringBuilder jsonContent = new StringBuilder();
+
+
+        String settingsFilePath = "settings.json";
+        File settingsFile = new File(settingsFilePath);
+
+        if (settingsFile.exists()) {
+            try {
+                Scanner scanner = new Scanner(settingsFile);
+               // StringBuilder jsonContent = new StringBuilder();
+                while (scanner.hasNextLine()) {
+                    jsonContent.append(scanner.nextLine());
+                }
+                scanner.close();
+            }catch (Exception e){
+
+                System.out.println(e.toString());
+            }
+
+                JSONObject settings = new JSONObject(jsonContent.toString());
+                JSONArray airconSettings = settings.getJSONArray("aircon");
+                JSONObject mqttSettings = settings.getJSONObject("mqttSettings");
+                JSONObject globalSettings = settings.getJSONObject("globalSettings");
+
+                for (int i = 0; i < airconSettings.length(); i++) {
+
+                AirCon aircon = new AirCon();
+                JSONObject airconSetting = airconSettings.getJSONObject(i);
+                
+                aircon.sethostname(airconSetting.get("hostname").toString());
+                aircon.setport(airconSetting.get("port").toString());
+                aircon.setDeviceID(airconSetting.get("deviceID").toString());
+                aircon.setOperatorID(airconSetting.get("operatorID").toString());
+
+                aircons.add(aircon);
+
+            }
+
+        }else{
+
+AirCon aircon = new AirCon();
+
+ // Set hostname and port.
+ aircon.sethostname("192.168.0.12");
+ aircon.setport("51443");
+ aircon.setDeviceID("e8165615c7d6");
+ aircon.setOperatorID("openhab");
+
+aircons.add(aircon);
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
 
         // Set hostname and port.
         aircon.sethostname("192.168.0.12");
         aircon.setport("51443");
         aircon.setDeviceID("e8165615c7d6");
         aircon.setOperatorID("openhab");
-        
+        */
 
         /*
          * this.command = command; // "getAirconStat"
@@ -26,6 +102,9 @@ public class Main {
          * this.contents = contents;
          * 
          */
+
+
+         for(AirCon aircon : aircons){
 
         try {
             // Get initial stats from aircon unit and parse into the aircon object.
@@ -44,6 +123,7 @@ public class Main {
 
             System.out.println(e.toString());
         }
+    }
 
        // if (args[0] == "mqtt") {
 
@@ -52,16 +132,19 @@ public class Main {
             MqttAirConBridge mqttService;
 
             try{
-             mqttService = new MqttAirConBridge(aircon, mqttHostname, aircon.getDeviceID(),5000,"openhab", "");
+             mqttService = new MqttAirConBridge(aircons, mqttHostname,5000,"openhab", "");
             // aircon.mqttStart(mqttHostname, mqttService);
 
             new Thread(() -> {
                 while (true) {
                     try {
+
+                        for(AirCon aircon : aircons){
                         System.out.println("checking in with aircon unit " + aircon.getAirConID());
                         aircon.getAirconStats(false);
                         mqttService.publishNow(aircon);
                         System.out.println("Sleeping");
+                        }
     
                         Thread.sleep(100000);
                     } catch (Exception e) {
@@ -85,7 +168,7 @@ public class Main {
         
 
 
-        System.out.println("Aircon ID: " + aircon.getAirConID());
+        //System.out.println("Aircon ID: " + aircon.getAirConID());
 
 
 

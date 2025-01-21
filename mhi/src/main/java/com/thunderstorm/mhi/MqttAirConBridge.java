@@ -26,15 +26,23 @@ public class MqttAirConBridge {
     private MqttClient client; //to make this thread safe with locks
     //private AirCon airCon;
 
-    public MqttAirConBridge(AirCon airCon, String url, String clientID, int interval, String username, String password)
+    public MqttAirConBridge(List<AirCon> airConList, String url, int interval, String username, String password)
             throws MqttException {
       //  this.airCon = airCon;
 
      // airCons.put(airCon.getAirConID(), airCon);
         this.url = url;
-        this.clientID = clientID;
+        //this.clientID = clientID;
         this.interval = interval;
         client = new MqttClient(url, clientID);
+
+for(AirCon aircon : airConList){
+
+airCons.put(aircon.getAirConID(), aircon);
+
+}
+
+
 
         MqttConnectOptions options = new MqttConnectOptions();
         if (!username.isEmpty() && !password.isEmpty()) {
@@ -151,12 +159,9 @@ public class MqttAirConBridge {
         });
         client.connect(options);
 
-        if(airCons.size() == 0){
-
-            addTopics(airCon);
-        }else{
+        
         airCons.forEach((key, value) -> addTopics(value));
-        }
+        
 
         /*
 
@@ -207,7 +212,7 @@ public class MqttAirConBridge {
 
 
 
-        airCons.put(airCon.getAirConID(), airCon);
+        //airCons.put(airCon.getAirConID(), airCon);
         // make sure things aren't null
         String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
         String baseTopicWrite = "aircon/" + airCon.getAirConID() + "/ReadWrite/";
