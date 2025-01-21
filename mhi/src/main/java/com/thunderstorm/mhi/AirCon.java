@@ -42,7 +42,7 @@ public class AirCon {
     private String OperatorID;
     private String AirConID;
 
-    private MqttAirConBridge mqttService;
+    //private MqttAirConBridge mqttService;
 
     boolean status;
     String firmware;
@@ -72,7 +72,7 @@ public class AirCon {
     private long minrefreshRate = 1L;
 
   
-    public boolean mqttStart(String mqttHostname,MqttAirConBridge mqttService){
+  /*  public boolean mqttStart(String mqttHostname,MqttAirConBridge mqttService){
 
         try {
             this.mqttService = mqttService;
@@ -87,6 +87,7 @@ public class AirCon {
 
         
     }
+        */
 
     // ----------------// Synchronised methods for getting and setting variables, to
     // add some basic level of thread safety. //----------------//
@@ -584,10 +585,11 @@ public class AirCon {
         try {
             AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
             AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
-            if(mqttService != null){
+        /*    if(mqttService != null){
 
                 mqttService.publishNow(this);
             }
+                */
             
             return true;
         } catch (Exception e) {
@@ -606,10 +608,11 @@ public class AirCon {
         try {
             AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
             AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
-            if(mqttService != null){
+          /*  if(mqttService != null){
 
                 mqttService.publishNow(this);
             }
+                */
             return true;
         } catch (Exception e) {
             System.out.println("Failed to translate response");
