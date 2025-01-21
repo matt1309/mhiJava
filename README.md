@@ -1,6 +1,6 @@
 # Mitsubishi Aircon Java Interface
 
-A generic Java interface for Mitsubishi Aircon Units.
+A MQTT bridge written in Java to itnerface with Mitsubishi Aircon Units.
 
 Heavily inspired/ported from the Home Assistant addon:  
 [https://github.com/jeatheak/Mitsubishi-WF-RAC-Integration](https://github.com/jeatheak/Mitsubishi-WF-RAC-Integration)
@@ -9,7 +9,8 @@ Heavily inspired/ported from the Home Assistant addon:
 
 ## Coming Soon:
 
-Optional MQTT bridge functionality to allow users to forward data to MQTT and also receive aircon commands via mqtt. 
+A seperate github repo will be created shortly to act as a simple java class so users can import into their projects to control aircon units via code. 
+(You can get this now but just copying the AirCon.java class file into your projects and then using the below methods to control the aircon unit's in your projects)
 
 ---
  
