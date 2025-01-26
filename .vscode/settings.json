@@ -4,7 +4,8 @@
     "java.configuration.runtimes": [
         {
             "name": "JavaSE-17",
-            "path": "/usr/lib/jvm/java-17-openjdk-armhf"
+            "path": "/usr/lib/jvm/java-17-openjdk-armhf",
+            "default": true
         }
     ]
 }

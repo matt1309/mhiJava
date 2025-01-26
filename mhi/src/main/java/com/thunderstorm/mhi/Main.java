@@ -20,7 +20,7 @@ public class Main {
         StringBuilder jsonContent = new StringBuilder();
 
         //checks for settings file
-        String settingsFilePath = "settings.json";
+        String settingsFilePath = "config.json";
         File settingsFile = new File(settingsFilePath);
 
         if (settingsFile.exists()) {
