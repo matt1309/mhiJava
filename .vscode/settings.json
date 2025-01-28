@@ -1,10 +1,12 @@
 {
   "java.configuration.updateBuildConfiguration": "interactive",
+  "java.jdt.ls.java.home": "/usr/lib/jvm/java-17-openjdk-armhf",
   "java.configuration.runtimes": [
     {
       "name": "JavaSE-17",
       "path": "/usr/lib/jvm/java-17-openjdk-armhf",
       "default": true
     }
-  ]
+  ],
+  "maven.view": "hierarchical"
 }

@@ -37,11 +37,18 @@ public class Main {
                 System.out.println(e.toString());
             }
 
+
+            try {
             JSONObject settings = new JSONObject(jsonContent.toString());
             JSONArray airconSettings = settings.getJSONArray("aircon");
             JSONObject mqttSettings = settings.getJSONObject("mqttSettings");
             JSONObject globalSettings = settings.getJSONObject("globalSettings");
+            catch (Exception e){
 
+                System.out.println("Error loading settings from Config.json : " e.toString());
+            }
+
+            //Loop and Load aircon settings.
             for (int i = 0; i < airconSettings.length(); i++) {
 
                 AirCon aircon = new AirCon();
@@ -61,14 +68,54 @@ public class Main {
             AirCon aircon = new AirCon();
 
 
+
+            try{
+
+                //mhi.jar -h 192.168.0.101 -p 51443 -d e8165615c7d6 -o openhab -mH 192.168.0.101 -mP 1883 -mU username -mP password -I 5000
+                
+
+                String hostname = null;
+                String port = null;
+                String deviceID = null;
+                String operatorID = null;
+        
+                for (int i = 0; i < args.length; i++) {
+                    switch (args[i]) {
+                        case "-h":
+                            hostname = args[++i];
+                            break;
+                        case "-p":
+                            port = args[++i];
+                            break;
+                        case "-d":
+                            deviceID = args[++i];
+                            break;
+                        case "-o":
+                            operatorID = args[++i];
+                            break;
+                        // Add cases for other arguments as needed
+                    }
+                }
+
+
+
+
+                aircon.sethostname(hostname);
+                aircon.setport(port);
+                aircon.setDeviceID(deviceID);
+                aircon.setOperatorID(operatorID);
+    
+
+
+            }catch (Exception e){
+
+                System.out.println("Error loading settings, missing config.json and one or more missing input args: " e.toString());
+
+            }
             //this will change to being static input args. 
             
             // Set hostname and port.
-            aircon.sethostname("192.168.0.12");
-            aircon.setport("51443");
-            aircon.setDeviceID("e8165615c7d6");
-            aircon.setOperatorID("openhab");
-
+         
             aircons.add(aircon);
 
         }
