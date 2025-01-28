@@ -1,0 +1,7 @@
+Debug the settings files and input args options in production environment.
+Add a few more try catches so that bugs wont destroy the whole service. 
+Work on MQTT reconnect in the event of a bug. 
+Add comments throughout. 
+
+Add functionality so users can add aircon units via mqtt rather than via settings.json.
+

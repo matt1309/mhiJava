@@ -16,6 +16,9 @@ public class Main {
         String settingsFilePath = "config.json";
         int interval = 10000;
         boolean mqtt = false;
+        String mqttHostname = "";
+        String mqttUsername = "";
+        String mqttPassword = "";
 
         // Read settings from file if it exists
         File settingsFile = new File(settingsFilePath);
@@ -32,39 +35,24 @@ public class Main {
                 JSONObject settings = new JSONObject(jsonContent.toString());
                 JSONArray airconSettings = settings.getJSONArray("aircon");
 
-                String mqttHostname = "";
-                String mqttUsername = "";
-                String mqttPassword = "";
-
-                
-
-                if(settings.has("mqttSettings")){
-
+                if (settings.has("mqttSettings")) {
 
                     mqtt = true;
 
-                    JSONObject mqttSetting = settings.get(mqttSettings);
-                     // Ensure required settings are defined
-                     if (!mqttSetting.has("hostname") || !mqttSetting.has("username") ||
-                     !mqttSetting.has("username") || !mqttSetting.has("password")) {
-                     throw new JSONException("Missing required MQTT settings in config.json");
+                    JSONObject mqttSetting = (JSONObject) settings.get("mqttSettings");
+                    // Ensure required settings are defined
+                    if (!mqttSetting.has("hostname") || !mqttSetting.has("username") ||
+                            !mqttSetting.has("username") || !mqttSetting.has("password")) {
+                        throw new JSONException("Missing required MQTT settings in config.json");
 
-
-                        //edit so username and password are optional. 
-                     mqttHostname = mqttSetting.get("hostname");
-                     mqttUsername = mqttSetting.get("username");
-                     mqttPassword = mqttSetting.get("password");
-                 }
-                    
+                        
+                    }
+                    // edit so username and password are optional.
+                    mqttHostname = mqttSetting.get("hostname").toString();
+                    mqttUsername = mqttSetting.get("username").toString();
+                    mqttPassword = mqttSetting.get("password").toString();
 
                 }
-
-
-
-
-
-
-
 
                 // Load aircon settings
                 for (int i = 0; i < airconSettings.length(); i++) {
@@ -73,7 +61,7 @@ public class Main {
 
                     // Ensure required settings are defined
                     if (!airconSetting.has("hostname") || !airconSetting.has("port") ||
-                        !airconSetting.has("deviceID") || !airconSetting.has("operatorID")) {
+                            !airconSetting.has("deviceID") || !airconSetting.has("operatorID")) {
                         throw new JSONException("Missing required aircon settings in config.json");
                     }
 
@@ -155,14 +143,14 @@ public class Main {
         }
 
         // Setup MQTT bridge
-       // String mqttHostname = "tcp://192.168.0.101";
+        // String mqttHostname = "tcp://192.168.0.101";
         try {
             MqttAirConBridge mqttService = null;
 
-            if(mqtt){
-            MqttAirConBridge mqttService = new MqttAirConBridge(aircons, mqttHostname, interval, mqttUserame, mqttPassword);
+            if (mqtt) {
+                mqttService = new MqttAirConBridge(aircons, mqttHostname, interval, mqttUsername,
+                        mqttPassword);
             }
-
 
             new Thread(() -> {
                 while (true) {
@@ -170,8 +158,8 @@ public class Main {
                         for (AirCon aircon : aircons) {
                             System.out.println("Checking in with aircon unit " + aircon.getAirConID());
                             aircon.getAirconStats(false);
-                            if(mqtt){
-                            mqttService.publishNow(aircon);
+                            if (mqtt) {
+                                mqttService.publishNow(aircon);
                             }
                             System.out.println("Sleeping...");
                         }
