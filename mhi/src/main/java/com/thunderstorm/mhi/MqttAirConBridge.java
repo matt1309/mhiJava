@@ -1,6 +1,5 @@
 package com.thunderstorm.mhi;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +11,6 @@ import org.eclipse.paho.client.mqttv3.*;
 
 public class MqttAirConBridge {
 
-    private String url;
     private String clientID = "AirConClient";
     // private static HashMap<String, String> topics;
     private static ConcurrentHashMap<String, List<String>> boolTopics = new ConcurrentHashMap<String, List<String>>();
@@ -31,7 +29,7 @@ public class MqttAirConBridge {
       //  this.airCon = airCon;
 
      // airCons.put(airCon.getAirConID(), airCon);
-        this.url = url;
+      
         //this.clientID = clientID;
         this.interval = interval;
         client = new MqttClient(url, clientID);
@@ -214,7 +212,7 @@ airCons.put(aircon.getAirConID(), aircon);
 
         //airCons.put(airCon.getAirConID(), airCon);
         // make sure things aren't null
-        String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
+      //  String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
         String baseTopicWrite = "aircon/" + airCon.getAirConID() + "/ReadWrite/";
         
         HashMap<String,List<String>> newstringTopics = new HashMap<String, List<String>>();
@@ -299,7 +297,7 @@ airCons.put(aircon.getAirConID(), aircon);
             System.out.println("Publishing data");
 
             String baseTopicRead = "aircon/" + aircon.getAirConID() + "/ReadOnly/";
-            String baseTopicWrite = "aircon/" + aircon.getAirConID() + "/ReadWrite/";
+            //String baseTopicWrite = "aircon/" + aircon.getAirConID() + "/ReadWrite/";
             // move this to a function so it can be called easily.
 
             // Publish each data point directly in the if conditions

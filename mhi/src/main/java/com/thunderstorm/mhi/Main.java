@@ -145,21 +145,24 @@ public class Main {
         // Setup MQTT bridge
         // String mqttHostname = "tcp://192.168.0.101";
         try {
-            MqttAirConBridge mqttService = null;
+        MqttAirConBridge mqttService = null;
 
             if (mqtt) {
                 mqttService = new MqttAirConBridge(aircons, mqttHostname, interval, mqttUsername,
                         mqttPassword);
             }
 
+            //final boolean finalMQTT = mqtt;
+            //final MqttAirConBridge finalMQTTBridge = mqttService;
+/*
             new Thread(() -> {
                 while (true) {
                     try {
                         for (AirCon aircon : aircons) {
                             System.out.println("Checking in with aircon unit " + aircon.getAirConID());
                             aircon.getAirconStats(false);
-                            if (mqtt) {
-                                mqttService.publishNow(aircon);
+                            if (finalMQTT) {
+                                finalMQTTBridge.publishNow(aircon);
                             }
                             System.out.println("Sleeping...");
                         }
@@ -169,6 +172,27 @@ public class Main {
                     }
                 }
             }).start();
+
+            */
+            while (true) {
+                try {
+                    for (AirCon aircon : aircons) {
+                        System.out.println("Checking in with aircon unit " + aircon.getAirConID());
+                        aircon.getAirconStats(false);
+                        if (mqtt) {
+                            mqttService.publishNow(aircon);
+                        }
+                        System.out.println("Sleeping...");
+                    }
+                    Thread.sleep(interval);
+                } catch (Exception e) {
+                    System.err.println("Error during MQTT loop: " + e.getMessage());
+                }
+            }
+
+
+
+
 
         } catch (Exception e) {
             System.err.println("Error initializing MQTT bridge: " + e.getMessage());
