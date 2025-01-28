@@ -32,7 +32,8 @@ public class MqttAirConBridge {
       
         //this.clientID = clientID;
         this.interval = interval;
-        client = new MqttClient(url, clientID);
+
+        client = new MqttClient("tcp://" + url, MqttClient.generateClientId());
 
 for(AirCon aircon : airConList){
 
