@@ -1,7 +1,5 @@
-Debug the settings files and input args options in production environment.
-Add a few more try catches so that bugs wont destroy the whole service. 
-Work on MQTT reconnect in the event of a bug. 
-Add comments throughout. 
+Expose more MQTT options: Like TLS MQTT and more options rather than just username and password support
+Add safety features for values which aren't allowed ie operationMode 0-4 etc.
 
-Add functionality so users can add aircon units via mqtt rather than via settings.json.
 
+edit the bools so they still send it false. need to swap from Ifs to try catch
