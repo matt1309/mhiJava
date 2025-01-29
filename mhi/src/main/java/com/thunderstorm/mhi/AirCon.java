@@ -540,7 +540,9 @@ public class AirCon {
                 jsonResponse = new JSONObject(responseString);
 
                 nextRequestAfter = LocalDateTime.now().plusSeconds(minrefreshRate);
+                setstatus(true);
             } catch (Exception e) {
+                setstatus(false);
                 System.out.println(e.toString());
             } finally {
                 if (httpClient != null) {

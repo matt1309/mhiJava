@@ -326,7 +326,7 @@ airCons.put(aircon.getAirConID(), aircon);
             if (aircon.getAirConID() != null && !aircon.getAirConID().isEmpty()) {
                 MqttMessage message = new MqttMessage(aircon.getAirConID().getBytes());
                 message.setQos(1);
-                client.publish(baseTopicRead + "airConID", message);
+                client.publish(baseTopicRead + "AirConID", message);
             }
             if (aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getstatus()).getBytes());
@@ -378,7 +378,7 @@ airCons.put(aircon.getAirConID(), aircon);
                 message.setQos(1);
                 client.publish(baseTopicRead + "presetTemp", message);
             }
-            if (aircon.getEntrust()) {
+            if (aircon.getEntrust() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getEntrust()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "entrust", message);
@@ -388,12 +388,12 @@ airCons.put(aircon.getAirConID(), aircon);
                 message.setQos(1);
                 client.publish(baseTopicRead + "modelNr", message);
             }
-            if (aircon.getVacant()) {
+            if (aircon.getVacant() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getVacant()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "vacant", message);
             }
-            if (aircon.getCoolHotJudge()) {
+            if (aircon.getCoolHotJudge() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getCoolHotJudge()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "coolHotJudge", message);
@@ -418,12 +418,12 @@ airCons.put(aircon.getAirConID(), aircon);
                 message.setQos(1);
                 client.publish(baseTopicRead + "errorCode", message);
             }
-            if (aircon.isSelfCleanOperation()) {
+            if (aircon.isSelfCleanOperation() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.isSelfCleanOperation()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "selfCleanOperation", message);
             }
-            if (aircon.isSelfCleanReset()) {
+            if (aircon.isSelfCleanReset() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.isSelfCleanReset()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "selfCleanReset", message);

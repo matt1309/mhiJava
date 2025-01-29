@@ -2,4 +2,5 @@ Expose more MQTT options: Like TLS MQTT and more options rather than just userna
 Add safety features for values which aren't allowed ie operationMode 0-4 etc.
 
 
-edit the bools so they still send it false. need to swap from Ifs to try catch
+Add function so bridge send false bools atm it wont send to mqtt. Need additional functions that sends falses If
+status is online. and doesnt bother if status is offline. 
