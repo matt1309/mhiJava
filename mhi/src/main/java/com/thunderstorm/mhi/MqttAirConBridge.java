@@ -11,7 +11,7 @@ import org.eclipse.paho.client.mqttv3.*;
 
 public class MqttAirConBridge {
 
-    private String clientID = "AirConClient";
+   // private String clientID = "AirConClient";
     // private static HashMap<String, String> topics;
     private static ConcurrentHashMap<String, List<String>> boolTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, List<String>> stringTopics = new ConcurrentHashMap<String, List<String>>();
@@ -31,7 +31,7 @@ public class MqttAirConBridge {
      // airCons.put(airCon.getAirConID(), airCon);
       
         //this.clientID = clientID;
-        this.interval = interval;
+       // this.interval = interval;
 
         client = new MqttClient("tcp://" + url, MqttClient.generateClientId());
 
