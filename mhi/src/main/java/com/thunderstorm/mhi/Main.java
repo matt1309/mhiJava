@@ -61,8 +61,7 @@ public class Main {
 
 
                     try{
-                        interval = (Float) ((JSONObject) settings.get("globalSettings")).get("AirconQueryinterval").floatValue();
-
+                        interval = (int) (((Number) ((JSONObject) settings.get("globalSettings")).get("AirconQueryinterval")).floatValue());
                     }catch (Exception e){
 
                         System.out.println("Error in type of number: " + e.toString());
