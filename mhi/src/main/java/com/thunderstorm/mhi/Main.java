@@ -177,7 +177,7 @@ public class Main {
                         if (mqtt) {
                             mqttService.publishNow(aircon);
                         }
-                        System.out.println("Sleeping...");
+                        System.out.println("Sleeping for " + interval/1000 + " seconds...");
                     }
                     Thread.sleep(interval);
                 } catch (Exception e) {

@@ -20,6 +20,7 @@ public class MqttAirConBridge {
     private static ConcurrentHashMap<String, AirCon> airCons = new ConcurrentHashMap<String, AirCon>();
 
     private static int interval = 5000; // 5 seconds
+    private String url;
 
     private MqttClient client; //to make this thread safe with locks
     //private AirCon airCon;
@@ -27,7 +28,7 @@ public class MqttAirConBridge {
     public MqttAirConBridge(List<AirCon> airConList, String url, int interval, String username, String password)
             throws MqttException {
       //  this.airCon = airCon;
-
+this.url = url;
      // airCons.put(airCon.getAirConID(), airCon);
       
         //this.clientID = clientID;
@@ -295,7 +296,7 @@ airCons.put(aircon.getAirConID(), aircon);
 
         try {
 
-            System.out.println("Publishing data");
+            System.out.println("Publishing data to MQTT server: " + url);
 
             String baseTopicRead = "aircon/" + aircon.getAirConID() + "/ReadOnly/";
             //String baseTopicWrite = "aircon/" + aircon.getAirConID() + "/ReadWrite/";
@@ -352,27 +353,27 @@ airCons.put(aircon.getAirConID(), aircon);
                 message.setQos(1);
                 client.publish(baseTopicRead + "operation", message);
             }
-            if (aircon.getOperationMode() != 0) {
+            if (aircon.getOperationMode() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getOperationMode()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "operationMode", message);
             }
-            if (aircon.getAirFlow() != 0) {
+            if (aircon.getAirFlow() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getAirFlow()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "airFlow", message);
             }
-            if (aircon.getWindDirectionUD() != 0) {
+            if (aircon.getWindDirectionUD() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getWindDirectionUD()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "windDirectionUD", message);
             }
-            if (aircon.getWindDirectionLR() != 0) {
+            if (aircon.getWindDirectionLR() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getWindDirectionLR()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "windDirectionLR", message);
             }
-            if (aircon.getPresetTemp() != 0.0) {
+            if (aircon.getPresetTemp() != -1.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getPresetTemp()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "presetTemp", message);
@@ -397,17 +398,17 @@ airCons.put(aircon.getAirConID(), aircon);
                 message.setQos(1);
                 client.publish(baseTopicRead + "coolHotJudge", message);
             }
-            if (aircon.getIndoorTemp() != 0.0) {
+            if (aircon.getIndoorTemp() != -100.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getIndoorTemp()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "indoorTemp", message);
             }
-            if (aircon.getOutdoorTemp() != 0.0) {
+            if (aircon.getOutdoorTemp() != -100.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getOutdoorTemp()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "outdoorTemp", message);
             }
-            if (aircon.getElectric() != 0.0) {
+            if (aircon.getElectric() != -1.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getElectric()).getBytes());
                 message.setQos(1);
                 client.publish(baseTopicRead + "electric", message);

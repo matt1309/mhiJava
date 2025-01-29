@@ -49,20 +49,20 @@ public class AirCon {
     int connectedAccounts;
 
     private boolean outdoorTemperature;
-    private Boolean Operation;
-    private int OperationMode;
-    private int AirFlow;
-    private int WindDirectionUD;
-    private int WindDirectionLR;
+    private Boolean Operation=false;
+    private int OperationMode=-1;
+    private int AirFlow=-1;
+    private int WindDirectionUD= -1;
+    private int WindDirectionLR= -1;
     private float PresetTemp;
     private boolean Entrust;
     private int ModelNr;
     private boolean Vacant;
     private boolean CoolHotJudge;
 
-    private float indoorTemp;
-    private float outdoorTemp;
-    private float electric;
+    private float indoorTemp = -100.00f;
+    private float outdoorTemp = -100.00f;
+    private float electric = -1.0f;
     private String errorCode;
 
     private boolean selfCleanOperation = false;
@@ -453,13 +453,13 @@ public class AirCon {
         if (getAirFlow() != 0) {
             System.out.println("AirFlow: " + getAirFlow());
         }
-        if (getWindDirectionUD() != 0) {
+        if (getWindDirectionUD() != -1) {
             System.out.println("WindDirectionUD: " + getWindDirectionUD());
         }
-        if (getWindDirectionLR() != 0) {
+        if (getWindDirectionLR() != -1) {
             System.out.println("WindDirectionLR: " + getWindDirectionLR());
         }
-        if (getPresetTemp() != 0.0) {
+        if (getPresetTemp() != -1.0) {
             System.out.println("PresetTemp: " + getPresetTemp());
         }
         if (getEntrust()) {
@@ -474,13 +474,13 @@ public class AirCon {
         if (getCoolHotJudge()) {
             System.out.println("CoolHotJudge: " + getCoolHotJudge());
         }
-        if (getIndoorTemp() != 0.0) {
+        if (getIndoorTemp() != -100.0) {
             System.out.println("IndoorTemp: " + getIndoorTemp());
         }
-        if (getOutdoorTemp() != 0.0) {
+        if (getOutdoorTemp() != -100.0) {
             System.out.println("OutdoorTemp: " + getOutdoorTemp());
         }
-        if (getElectric() != 0.0) {
+        if (getElectric() != -1.0) {
             System.out.println("Electric: " + getElectric());
         }
         if (getErrorCode() != null && !getErrorCode().isEmpty()) {
@@ -536,7 +536,7 @@ public class AirCon {
                 CloseableHttpResponse response = httpClient.execute(request);
 
                 String responseString = EntityUtils.toString(response.getEntity());
-                System.out.println(responseString);
+                System.out.println("Received response from aircon: " + responseString);
                 jsonResponse = new JSONObject(responseString);
 
                 nextRequestAfter = LocalDateTime.now().plusSeconds(minrefreshRate);
