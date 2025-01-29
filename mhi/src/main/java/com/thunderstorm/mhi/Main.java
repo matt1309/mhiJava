@@ -12,10 +12,13 @@ import org.json.JSONObject;
 
 public class Main {
     public static void main(String[] args) {
+
+        //Variable setup
         List<AirCon> aircons = new ArrayList<>();
         String settingsFilePath = "config.json";
-        int interval = 10000;
-        boolean mqtt = false;
+        //Default query frequency (Assuming no requests)
+        int interval = 60000; //60 seconds
+        boolean mqtt = false; //Default is not to use mqtt. 
         String mqttHostname = "";
         String mqttUsername = "";
         String mqttPassword = "";
@@ -47,10 +50,24 @@ public class Main {
 
                         
                     }
-                    // edit so username and password are optional.
+                    // edit so username and password are optional and add features like tls etc
                     mqttHostname = mqttSetting.get("hostname").toString();
                     mqttUsername = mqttSetting.get("username").toString();
                     mqttPassword = mqttSetting.get("password").toString();
+
+                }
+
+                if(settings.has("globalSettings") && (((JSONObject) settings.get("globalSettings")).has("AirconQueryinterval"))){
+
+
+                    try{
+                        interval = (Float) ((JSONObject) settings.get("globalSettings")).get("AirconQueryinterval").floatValue();
+
+                    }catch (Exception e){
+
+                        System.out.println("Error in type of number: " + e.toString());
+                    }
+
 
                 }
 
@@ -152,28 +169,7 @@ public class Main {
                         mqttPassword);
             }
 
-            //final boolean finalMQTT = mqtt;
-            //final MqttAirConBridge finalMQTTBridge = mqttService;
-/*
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        for (AirCon aircon : aircons) {
-                            System.out.println("Checking in with aircon unit " + aircon.getAirConID());
-                            aircon.getAirconStats(false);
-                            if (finalMQTT) {
-                                finalMQTTBridge.publishNow(aircon);
-                            }
-                            System.out.println("Sleeping...");
-                        }
-                        Thread.sleep(interval);
-                    } catch (Exception e) {
-                        System.err.println("Error during MQTT loop: " + e.getMessage());
-                    }
-                }
-            }).start();
 
-            */
             while (true) {
                 try {
                     for (AirCon aircon : aircons) {
