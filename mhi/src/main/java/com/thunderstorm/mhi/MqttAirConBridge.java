@@ -293,12 +293,14 @@ airCons.put(aircon.getAirConID(), aircon);
 
         MqttMessage message = new MqttMessage(inputMessage.getBytes());
         message.setQos(1); // QoS 1 ensures the message is delivered at least once
+        String baseTopicRead = "aircon/" + aircon.getAirConID() + "/ReadOnly/";
+        try
+        {
         client.publish(baseTopicRead + "bridgeStatus", message);
-    }
+        } catch (Exception e){
 
-
-
-
+            System.out.println(e.toString());
+        }
     }
 
 
