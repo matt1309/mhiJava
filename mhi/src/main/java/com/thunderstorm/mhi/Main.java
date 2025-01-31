@@ -176,7 +176,7 @@ public class Main {
                         if(aircon.getAirconStats(false) & mqtt){
 
                             if(!aircon.getstatus()){
-                            mqttService.logToMQTT(aircon, "Error receiving data from aircon")
+                            mqttService.logToMQTT(aircon, "Error receiving data from aircon");
                             
                             aircon.setstatus(false);
                                 mqttService.publishNow(aircon);
@@ -184,14 +184,14 @@ public class Main {
                             }else{
 
 
-                                if(aircon.getstatus){
+                                if(aircon.getstatus()){
 
                                     aircon.setstatus(true);
                                     mqttService.publishNow(aircon);
 
                                 }
 
-                                mqttService.logToMQTT(aircon, "Ok")
+                                mqttService.logToMQTT(aircon, "Ok");
                             }
 
 
