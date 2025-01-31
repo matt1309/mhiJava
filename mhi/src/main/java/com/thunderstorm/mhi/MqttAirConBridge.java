@@ -229,7 +229,7 @@ airCons.put(aircon.getAirConID(), aircon);
         newstringTopics.put(baseTopicWrite + "port", Arrays.asList(airCon.getAirConID(),"port"));
         newstringTopics.put(baseTopicWrite + "deviceID", Arrays.asList(airCon.getAirConID(),"DeviceID"));
         newstringTopics.put(baseTopicWrite + "errorCode", Arrays.asList(airCon.getAirConID(),"errorCode"));
-
+        
 
         // Boolean topics
         newboolTopics.put(baseTopicWrite + "status", Arrays.asList(airCon.getAirConID(),"status"));
@@ -289,7 +289,17 @@ airCons.put(aircon.getAirConID(), aircon);
 
     }
 
+    public void logToMQTT(AirCon aircon, String inputMessage) {
 
+        MqttMessage message = new MqttMessage(inputMessage.getBytes());
+        message.setQos(1); // QoS 1 ensures the message is delivered at least once
+        client.publish(baseTopicRead + "bridgeStatus", message);
+    }
+
+
+
+
+    }
 
 
     public void publishNow(AirCon aircon) {

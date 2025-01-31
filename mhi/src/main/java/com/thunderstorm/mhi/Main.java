@@ -173,13 +173,29 @@ public class Main {
                 try {
                     for (AirCon aircon : aircons) {
                         System.out.println("Checking in with aircon unit " + aircon.getAirConID());
-                        try{
-                        aircon.getAirconStats(false);
-                        }catch (Exception e){
+                        if(aircon.getAirconStats(false) & mqtt){
 
-                            System.out.println("Error: " + e.toString());
-                            aircon.setstatus(false);
+                            if(!aircon.getstatus()){
+                            mqttService.logToMQTT(aircon, "Error receiving data from aircon")
                             
+                            aircon.setstatus(false);
+                                mqttService.publishNow(aircon);
+
+                            }else{
+
+
+                                if(aircon.getstatus){
+
+                                    aircon.setstatus(true);
+                                    mqttService.publishNow(aircon);
+
+                                }
+
+                                mqttService.logToMQTT(aircon, "Ok")
+                            }
+
+
+
                         }
                         if (mqtt) {
                             mqttService.publishNow(aircon);
