@@ -1,6 +1,5 @@
 Expose more MQTT options: Like TLS MQTT and more options rather than just username and password support
 Add safety features for values which aren't allowed ie operationMode 0-4 etc.
 
-
-Add function so bridge send false bools atm it wont send to mqtt. Need additional functions that sends falses If
-status is online. and doesnt bother if status is offline. 
+Rate limiting/overloading MQTT solution. 
+I think sending data using a queue or even just in a seperate thread is better. 
