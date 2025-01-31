@@ -181,7 +181,7 @@ public class Main {
                             aircon.setstatus(false);
                                 mqttService.publishNow(aircon);
 
-                            }else{
+                            }else if(mqtt){
 
 
                                 if(aircon.getstatus()){
@@ -197,9 +197,7 @@ public class Main {
 
 
                         }
-                        if (mqtt) {
-                            mqttService.publishNow(aircon);
-                        }
+                       
                         System.out.println("Sleeping for " + interval/1000 + " seconds...");
                     }
                     Thread.sleep(interval);

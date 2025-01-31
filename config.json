@@ -6,7 +6,7 @@
 
 "mqttSettings": {"hostname": "192.168.0.101",
                 "username": "openhab",
-                "password":"test123"},
+                "password":"walesrules1309"},
 
 
 "aircon": [{"hostname":"192.168.0.12",
