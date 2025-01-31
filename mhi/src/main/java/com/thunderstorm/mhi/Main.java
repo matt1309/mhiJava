@@ -173,7 +173,14 @@ public class Main {
                 try {
                     for (AirCon aircon : aircons) {
                         System.out.println("Checking in with aircon unit " + aircon.getAirConID());
+                        try{
                         aircon.getAirconStats(false);
+                        }catch (Exception e){
+
+                            System.out.println("Error: " + e.toString());
+                            aircon.setstatus(false);
+                            
+                        }
                         if (mqtt) {
                             mqttService.publishNow(aircon);
                         }
