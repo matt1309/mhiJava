@@ -20,6 +20,7 @@ public class MqttAirConBridge {
     private static ConcurrentHashMap<String, List<String>> floatTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, List<String>> intTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, AirCon> airCons = new ConcurrentHashMap<String, AirCon>();
+    //private static ConcurrentHashMap<String, String> topicAirConLookup = new ConcurrentHashMap<String, String>();
     // private static ConcurrentHashMap<String, Boolean> makingChanges = new
     // ConcurrentHashMap<String, Boolean>();
 
@@ -150,6 +151,7 @@ public class MqttAirConBridge {
                     handleTopicFloat(topic, val);
                     System.out.println("Float values received from: " + topic + " with value: " + val);
                     changesMade = true;
+                    System.out.println(floatTopics.get(topic).get(0));
                     airConsChanged.add((floatTopics.get(topic)).get(0));
 
                 }
@@ -223,6 +225,10 @@ public class MqttAirConBridge {
 
             AirCon aircon = airCons.get(airconID);
             String command = aircon.parser.toBase64();
+
+
+            //System.out.println("Updating Aircon: " + aircon.getAirConID());
+           //aircon.printDeviceData();
 
             try {
                 // sending command to the aircon unit itself
@@ -690,6 +696,7 @@ public class MqttAirConBridge {
                 
             }
 
+            aircon.printDeviceData();
             System.out.println("Publishing complete");
 
             // Thread.sleep(interval);
@@ -850,6 +857,10 @@ public class MqttAirConBridge {
             case "selfCleanReset":
                 aircon.setSelfCleanReset(input);
                 break;
+            case "operation":
+                aircon.setOperation(input);
+                break;
+
 
             // Add more cases as needed
             default:
@@ -867,10 +878,11 @@ public class MqttAirConBridge {
         @Override
         public void run() {
             try {
-                while (!messageQueue.isEmpty()) {
+                while (true) {
+                    //System.out.println(messageQueue.isEmpty());
                     // Take the message from the queue
                     topicMessage pair = messageQueue.take(); // This will block if the queue is empty
-                 //   System.out.println("Processing: " + pair);
+                   System.out.println("Processing: " + pair);
 
                     try{
                     client.publish(pair.getTopic(),pair.getMessage());

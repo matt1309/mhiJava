@@ -179,6 +179,11 @@ public class Main {
                             mqttService.logToMQTT(aircon, "Error receiving data from aircon");
                             
                             aircon.setstatus(false);
+
+                            
+                                
+
+
                                 mqttService.publishNow(aircon);
 
                             }else if(mqtt){
