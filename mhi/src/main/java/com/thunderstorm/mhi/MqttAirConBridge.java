@@ -20,13 +20,15 @@ public class MqttAirConBridge {
     private static ConcurrentHashMap<String, List<String>> floatTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, List<String>> intTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, AirCon> airCons = new ConcurrentHashMap<String, AirCon>();
-    //private static ConcurrentHashMap<String, String> topicAirConLookup = new ConcurrentHashMap<String, String>();
+    private static ConcurrentHashMap<String, String> isRunning = new ConcurrentHashMap<String, String>();
+    // private static ConcurrentHashMap<String, String> topicAirConLookup = new
+    // ConcurrentHashMap<String, String>();
     // private static ConcurrentHashMap<String, Boolean> makingChanges = new
     // ConcurrentHashMap<String, Boolean>();
 
-
     private static BlockingQueue<topicMessage> messageQueue = new LinkedBlockingQueue<topicMessage>();
-
+   // private static BlockingQueue<Set<String>> batchTopicChanges = new LinkedBlockingQueue<Set<String>>();
+  //  private static AtomicBoolean isRunning = new AtomicBoolean(false);
 
     private static int interval = 5000; // 5 seconds
     private String url;
@@ -34,7 +36,7 @@ public class MqttAirConBridge {
     private static MqttClient client; // to make this thread safe with locks
     // private AirCon airCon;
 
-    public MqttAirConBridge(List<AirCon> airConList, String url, int interval, String username, String password)
+    public MqttAirConBridge(List<AirCon> airConList, String url, int interval, String username, String password, Boolean spamMode)
             throws MqttException {
         // this.airCon = airCon;
         this.url = url;
@@ -60,69 +62,7 @@ public class MqttAirConBridge {
         }
 
         options.setMaxInflight(50);
-        // airCons.put(airCon.getAirConID(), airCon);
-        // make sure things aren't null
-        //
-        /*
-         * String baseTopicRead = "aircon/" + airCon.getAirConID() + "/ReadOnly/";
-         * String baseTopicWrite = "aircon/" + airCon.getAirConID() + "/ReadWrite/";
-         * 
-         * // String topics
-         * stringTopics.put(baseTopicWrite + "AirConID",
-         * Arrays.asList(airCon.getAirConID(),"AirConID"));
-         * stringTopics.put(baseTopicWrite + "hostname",
-         * Arrays.asList(airCon.getAirConID(),"hostname"));
-         * stringTopics.put(baseTopicWrite + "port",
-         * Arrays.asList(airCon.getAirConID(),"port"));
-         * stringTopics.put(baseTopicWrite + "deviceID",
-         * Arrays.asList(airCon.getAirConID(),"DeviceID"));
-         * stringTopics.put(baseTopicWrite + "errorCode",
-         * Arrays.asList(airCon.getAirConID(),"errorCode"));
-         * 
-         * // Boolean topics
-         * boolTopics.put(baseTopicWrite + "status",
-         * Arrays.asList(airCon.getAirConID(),"status"));
-         * boolTopics.put(baseTopicWrite + "entrust",
-         * Arrays.asList(airCon.getAirConID(),"entrust"));
-         * boolTopics.put(baseTopicWrite + "vacant",
-         * Arrays.asList(airCon.getAirConID(),"vacant"));
-         * boolTopics.put(baseTopicWrite + "coolHotJudge",
-         * Arrays.asList(airCon.getAirConID(),"coolHotJudge"));
-         * boolTopics.put(baseTopicWrite + "selfCleanOperation",
-         * Arrays.asList(airCon.getAirConID(),"selfCleanOperation"));
-         * boolTopics.put(baseTopicWrite + "selfCleanReset",
-         * Arrays.asList(airCon.getAirConID(),"selfCleanReset"));
-         * 
-         * // Float topics
-         * floatTopics.put(baseTopicWrite + "presetTemp",
-         * Arrays.asList(airCon.getAirConID(),"PresetTemp"));
-         * floatTopics.put(baseTopicWrite + "indoorTemp",
-         * Arrays.asList(airCon.getAirConID(),"indoorTemp"));
-         * floatTopics.put(baseTopicWrite + "outdoorTemp",
-         * Arrays.asList(airCon.getAirConID(),"outdoorTemp"));
-         * floatTopics.put(baseTopicWrite + "electric",
-         * Arrays.asList(airCon.getAirConID(),"electric"));
-         * 
-         * // int Topics
-         * intTopics.put(baseTopicWrite + "airFlow",
-         * Arrays.asList(airCon.getAirConID(),"airFlow"));
-         * intTopics.put(baseTopicWrite + "windDirectionUD",
-         * Arrays.asList(airCon.getAirConID(),"windDirectionUD"));
-         * intTopics.put(baseTopicWrite + "windDirectionLR",
-         * Arrays.asList(airCon.getAirConID(),"windDirectionLR"));
-         * 
-         * // Operation topics
-         * boolTopics.put(baseTopicWrite + "operation",
-         * Arrays.asList(airCon.getAirConID(),"operation"));
-         * floatTopics.put(baseTopicWrite + "operationMode",
-         * Arrays.asList(airCon.getAirConID(),"operationMode"));
-         * 
-         * // to add the rest of the topics. and add a function to retrospectively add
-         * // units after initialisation for library use more than anything.
-         * // change the mqtt implementation to be callback functions so that users can
-         * add
-         * // their own functions to make it more generic.
-         */
+      
 
         client.setCallback(new MqttCallback() {
             @Override
@@ -143,54 +83,65 @@ public class MqttAirConBridge {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
 
                 Boolean changesMade = false;
+                //this doesnt need to be a set as it's never going to loop, it's single call function. 
                 Set<String> airConsChanged = new HashSet<String>();
+                String airConIDChanged = "";
 
                 if (floatTopics.containsKey(topic) && (floatTopics.get(topic) != null)) {
 
                     float val = Float.parseFloat(new String(message.getPayload()));
-                    handleTopicFloat(topic, val);
+                    changesMade = handleTopicFloat(topic, val);
                     System.out.println("Float values received from: " + topic + " with value: " + val);
-                    changesMade = true;
+                   // changesMade = true;
                     System.out.println(floatTopics.get(topic).get(0));
                     airConsChanged.add((floatTopics.get(topic)).get(0));
+                    airConIDChanged = floatTopics.get(topic).get(0);
 
                 }
 
                 if (stringTopics.containsKey(topic) && (stringTopics.get(topic) != null)) {
 
                     String val = new String(message.getPayload());
-                    handleTopicString(topic, val);
+                    changesMade =  handleTopicString(topic, val);
                     System.out.println("String value received from: " + topic + " with value: " + val);
-                    changesMade = true;
+                  //  changesMade = true;
                     airConsChanged.add((stringTopics.get(topic)).get(0));
+                    airConIDChanged = stringTopics.get(topic).get(0);
 
                 }
 
                 if (boolTopics.containsKey(topic) && (boolTopics.get(topic) != null)) {
 
                     Boolean val = Boolean.parseBoolean(new String(message.getPayload()));
-                    handleTopicBool(topic, val);
+                    changesMade = handleTopicBool(topic, val);
                     System.out.println("Boolean values received from: " + topic + " with value: " + val);
-                    changesMade = true;
+                    //changesMade = true;
                     airConsChanged.add((boolTopics.get(topic)).get(0));
+                    airConIDChanged = (boolTopics.get(topic)).get(0);
                 }
 
                 if (intTopics.containsKey(topic) && (boolTopics.get(topic) != null)) {
 
                     int val = Integer.parseInt(new String(message.getPayload()));
-                    handleTopicInt(topic, val);
+                    changesMade = handleTopicInt(topic, val);
                     System.out.println("Int values received from: " + topic + " with value: " + val);
-                    changesMade = true;
+                  //  changesMade = true;
                     airConsChanged.add((intTopics.get(topic)).get(0));
+                    airConIDChanged = (intTopics.get(topic)).get(0);
                 }
 
                 if (changesMade) {
 
+                    //no need to have a set here it's only ever going to be of size 1. 
                     updateAirCon(airConsChanged);
+                    //updateAirCon(airConIDChanged);
 
-                }
+                }                                
+                        
+
+                  
             }
-
+        
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
                 // No action needed
@@ -221,38 +172,19 @@ public class MqttAirConBridge {
 
     public void updateAirCon(Set<String> airConIDs) {
 
+        //I've written this wrong, it's never going to loop with how I've written it as one call will only have
+        //one airconID in the set, but oh well, might be useful one day.
         for (String airconID : airConIDs) {
 
             AirCon aircon = airCons.get(airconID);
-            String command = aircon.parser.toBase64();
-
-
-            //System.out.println("Updating Aircon: " + aircon.getAirConID());
-           //aircon.printDeviceData();
+            //might be worth moving this inside the aircon object and locking from inside can make lock private then
+           
 
             try {
                 // sending command to the aircon unit itself
-                aircon.sendAircoCommand(command);
+                aircon.sendAircoCommand();
 
-                // airCon.printDeviceData();
-                // MOving this into a thread to try fix issues
-                /*
-                 * new Thread(() -> {
-                 * 
-                 * try {
-                 * 
-                 * 
-                 * publishNow(aircon);
-                 * 
-                 * 
-                 * 
-                 * } catch (Exception e) {
-                 * e.printStackTrace();
-                 * }
-                 * 
-                 * }).start();
-                 * 
-                 */
+                
 
                 publishNow(aircon);
             } catch (Exception e) {
@@ -260,8 +192,8 @@ public class MqttAirConBridge {
                 System.out.println(e.toString());
             }
         }
+        }
 
-    }
 
     public void addTopics(AirCon airCon) {
 
@@ -343,16 +275,12 @@ public class MqttAirConBridge {
         message.setQos(1); // QoS 1 ensures the message is delivered at least once
         String baseTopicRead = "aircon/" + aircon.getAirConID() + "/ReadOnly/";
         try {
-            
-            
+
             topicMessage tM = new topicMessage(baseTopicRead + "bridgeStatus", message);
 
-                messageQueue.put(tM);
-            
-            
-           // client.publish(baseTopicRead + "bridgeStatus", message);
+            messageQueue.put(tM);
 
-
+            // client.publish(baseTopicRead + "bridgeStatus", message);
 
         } catch (Exception e) {
 
@@ -378,11 +306,10 @@ public class MqttAirConBridge {
                 topicMessage tM = new topicMessage(baseTopicRead + "hostname", message);
 
                 messageQueue.put(tM);
-                
 
-               // client.publish(baseTopicRead + "hostname", message);
-                //Thread.sleep(100);
-                
+                // client.publish(baseTopicRead + "hostname", message);
+                // Thread.sleep(100);
+
             }
             if (aircon.getport() != null && !aircon.getport().isEmpty()) {
                 MqttMessage message = new MqttMessage(aircon.getport().getBytes());
@@ -392,9 +319,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-              //  client.publish(baseTopicRead + "port", message);
-               // Thread.sleep(100);
-                
+                // client.publish(baseTopicRead + "port", message);
+                // Thread.sleep(100);
+
             }
             if (aircon.getDeviceID() != null && !aircon.getDeviceID().isEmpty()) {
                 MqttMessage message = new MqttMessage(aircon.getDeviceID().getBytes());
@@ -404,10 +331,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-
-              //  client.publish(baseTopicRead + "deviceID", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "deviceID", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getOperatorID() != null && !aircon.getOperatorID().isEmpty()) {
                 MqttMessage message = new MqttMessage(aircon.getOperatorID().getBytes());
@@ -417,9 +343,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-               // client.publish(baseTopicRead + "operatorID", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "operatorID", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getAirConID() != null && !aircon.getAirConID().isEmpty()) {
                 MqttMessage message = new MqttMessage(aircon.getAirConID().getBytes());
@@ -429,10 +355,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-
-                //client.publish(baseTopicRead + "AirConID", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "AirConID", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getstatus()).getBytes());
@@ -441,9 +366,9 @@ public class MqttAirConBridge {
                 topicMessage tM = new topicMessage(baseTopicRead + "status", message);
 
                 messageQueue.put(tM);
-              //  client.publish(baseTopicRead + "status", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "status", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getfirmware() != null && !aircon.getfirmware().isEmpty()) {
                 MqttMessage message = new MqttMessage(aircon.getfirmware().getBytes());
@@ -452,9 +377,9 @@ public class MqttAirConBridge {
                 topicMessage tM = new topicMessage(baseTopicRead + "firmware", message);
 
                 messageQueue.put(tM);
-              //  client.publish(baseTopicRead + "firmware", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "firmware", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getconnectedAccounts() != 0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getconnectedAccounts()).getBytes());
@@ -464,37 +389,33 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-
-                //client.publish(baseTopicRead + "connectedAccounts", message);
-                //hread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "connectedAccounts", message);
+                // hread.sleep(100);
+                // ;
             }
             if (aircon.getOutdoorTemperature()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getOutdoorTemperature()).getBytes());
                 message.setQos(1);
 
-
                 topicMessage tM = new topicMessage(baseTopicRead + "outdoorTemperature", message);
 
                 messageQueue.put(tM);
 
-               // client.publish(baseTopicRead + "outdoorTemperature", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "outdoorTemperature", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getOperation() != null) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getOperation()).getBytes());
                 message.setQos(1);
 
-
                 topicMessage tM = new topicMessage(baseTopicRead + "operation", message);
 
                 messageQueue.put(tM);
 
-
-              //  client.publish(baseTopicRead + "operation", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "operation", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getOperationMode() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getOperationMode()).getBytes());
@@ -504,10 +425,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-
-//                client.publish(baseTopicRead + "operationMode", message);
-  //              Thread.sleep(100);
-    //            ;
+                // client.publish(baseTopicRead + "operationMode", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getAirFlow() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getAirFlow()).getBytes());
@@ -516,9 +436,9 @@ public class MqttAirConBridge {
                 topicMessage tM = new topicMessage(baseTopicRead + "airFlow", message);
 
                 messageQueue.put(tM);
-             //   client.publish(baseTopicRead + "airFlow", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "airFlow", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getWindDirectionUD() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getWindDirectionUD()).getBytes());
@@ -528,10 +448,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-
-               // client.publish(baseTopicRead + "windDirectionUD", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "windDirectionUD", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getWindDirectionLR() != -1) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getWindDirectionLR()).getBytes());
@@ -541,9 +460,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-               // client.publish(baseTopicRead + "windDirectionLR", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "windDirectionLR", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getPresetTemp() != -1.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getPresetTemp()).getBytes());
@@ -553,9 +472,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-          //      client.publish(baseTopicRead + "presetTemp", message);
-            //    Thread.sleep(100);
-              //  ;
+                // client.publish(baseTopicRead + "presetTemp", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getEntrust() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getEntrust()).getBytes());
@@ -565,9 +484,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-             //   client.publish(baseTopicRead + "entrust", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "entrust", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getModelNr() != 0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getModelNr()).getBytes());
@@ -577,10 +496,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-
-               // client.publish(baseTopicRead + "modelNr", message);
-            //Thread.sleep(100);
-              //  ;
+                // client.publish(baseTopicRead + "modelNr", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getVacant() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getVacant()).getBytes());
@@ -590,9 +508,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-               // client.publish(baseTopicRead + "vacant", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "vacant", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getCoolHotJudge() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getCoolHotJudge()).getBytes());
@@ -602,9 +520,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-              //  client.publish(baseTopicRead + "coolHotJudge", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "coolHotJudge", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getIndoorTemp() != -100.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getIndoorTemp()).getBytes());
@@ -614,9 +532,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-              //  client.publish(baseTopicRead + "indoorTemp", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "indoorTemp", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getOutdoorTemp() != -100.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getOutdoorTemp()).getBytes());
@@ -625,9 +543,9 @@ public class MqttAirConBridge {
                 topicMessage tM = new topicMessage(baseTopicRead + "outdoorTemp", message);
 
                 messageQueue.put(tM);
-               // client.publish(baseTopicRead + "outdoorTemp", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "outdoorTemp", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getElectric() != -1.0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getElectric()).getBytes());
@@ -637,9 +555,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-               // client.publish(baseTopicRead + "electric", message);
-               // Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "electric", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.getErrorCode() != null && !aircon.getErrorCode().isEmpty()) {
                 MqttMessage message = new MqttMessage(aircon.getErrorCode().getBytes());
@@ -649,9 +567,9 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-                //client.publish(baseTopicRead + "errorCode", message);
-                //Thread.sleep(100);
-                //;
+                // client.publish(baseTopicRead + "errorCode", message);
+                // Thread.sleep(100);
+                // ;
             }
             if (aircon.isSelfCleanOperation() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.isSelfCleanOperation()).getBytes());
@@ -661,7 +579,6 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-              
             }
             if (aircon.isSelfCleanReset() || aircon.getstatus()) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.isSelfCleanReset()).getBytes());
@@ -671,8 +588,6 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-                
-                
             }
             if (aircon.isnextRequestAfter() != null) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.isnextRequestAfter()).getBytes());
@@ -682,7 +597,6 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-                
             }
             if (aircon.isminrefreshRate() != 0) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.isminrefreshRate()).getBytes());
@@ -692,8 +606,6 @@ public class MqttAirConBridge {
 
                 messageQueue.put(tM);
 
-                
-                
             }
 
             aircon.printDeviceData();
@@ -722,8 +634,9 @@ public class MqttAirConBridge {
         }).start();
     }
 
-    public static void handleTopicFloat(String topic, float input) {
+    public static Boolean handleTopicFloat(String topic, float input) {
 
+        Boolean changesMade = false;
         String topicClean = (floatTopics.get(topic)).get(1);
         String airconID = (floatTopics.get(topic)).get(0);
 
@@ -733,19 +646,19 @@ public class MqttAirConBridge {
 
         switch (topicClean) {
             case "PresetTemp":
-                aircon.setPresetTemp(input);
+               changesMade = aircon.setPresetTemp(input);
                 break;
             // Add more cases as needed
             case "indoorTemp":
-                aircon.setIndoorTemp(input);
+            changesMade = aircon.setIndoorTemp(input);
                 break;
             // Add more cases as needed
             case "outdoorTemp":
-                aircon.setOutdoorTemp(input);
+            changesMade =  aircon.setOutdoorTemp(input);
                 break;
             // Add more cases as needed
             case "electric":
-                aircon.setElectric(input);
+            changesMade = aircon.setElectric(input);
                 break;
             // Add more cases as needed
 
@@ -753,10 +666,12 @@ public class MqttAirConBridge {
                 System.out.println("Unknown topic: " + topicClean);
                 break;
         }
+        return changesMade;
     }
 
-    public static void handleTopicInt(String topic, int input) {
+    public static Boolean handleTopicInt(String topic, int input) {
 
+        Boolean changesMade = false;
         String topicClean = intTopics.get(topic).get(1);
         String airconID = intTopics.get(topic).get(0);
 
@@ -764,29 +679,31 @@ public class MqttAirConBridge {
 
         switch (topicClean) {
             case "airFlow":
-                aircon.setAirFlow(input);
+            changesMade = aircon.setAirFlow(input);
                 break;
             case "windDirectionUD":
-                aircon.setWindDirectionUD(input);
+            changesMade = aircon.setWindDirectionUD(input);
                 break;
             // Add more cases as needed
             case "windDirectionLR":
-                aircon.setWindDirectionLR(input);
+            changesMade = aircon.setWindDirectionLR(input);
                 break;
             // Add more cases as needed
 
             case "operationMode":
-                aircon.setOperationMode(input);
+            changesMade =  aircon.setOperationMode(input);
                 break;
             // Add more cases as needed
             default:
                 System.out.println("Unknown topic: " + topicClean);
                 break;
         }
+        return changesMade;
     }
 
-    public static void handleTopicString(String topic, String input) {
+    public static Boolean handleTopicString(String topic, String input) {
 
+        Boolean changesMade = false;
         String topicClean = stringTopics.get(topic).get(1);
         String airconID = stringTopics.get(topic).get(0);
 
@@ -806,20 +723,20 @@ public class MqttAirConBridge {
 
         switch (topicClean) {
             case "hostname":
-                aircon.sethostname(input);
+            changesMade = aircon.sethostname(input);
                 break;
             case "port":
-                aircon.setport(input);
+            changesMade = aircon.setport(input);
                 break;
             case "DeviceID":
-                aircon.setDeviceID(input);
+            changesMade = aircon.setDeviceID(input);
                 break;
             case "AirConID":
-                aircon.setAirConID(input);
+            changesMade = aircon.setAirConID(input);
                 break;
             // Add more cases as needed
             case "errorCode":
-                aircon.setErrorCode(input);
+            changesMade =   aircon.setErrorCode(input);
                 break;
 
             // Add more cases as needed
@@ -827,9 +744,12 @@ public class MqttAirConBridge {
                 System.out.println("Unknown topic: " + topicClean);
                 break;
         }
+        return changesMade;
+        
     }
 
-    public static void handleTopicBool(String topic, Boolean input) {
+    public static Boolean handleTopicBool(String topic, Boolean input) {
+        Boolean changesMade = false;
 
         String topicClean = boolTopics.get(topic).get(1);
         String airconID = boolTopics.get(topic).get(0);
@@ -840,54 +760,50 @@ public class MqttAirConBridge {
 
         switch (topicClean) {
             case "status":
-                aircon.setstatus(input);
+            changesMade =  aircon.setstatus(input);
                 break;
             case "entrust":
-                aircon.setEntrust(input);
+            changesMade = aircon.setEntrust(input);
                 break;
             case "vacant":
-                aircon.setVacant(input);
+            changesMade = aircon.setVacant(input);
                 break;
             case "coolHotJudge":
-                aircon.setCoolHotJudge(input);
+            changesMade = aircon.setCoolHotJudge(input);
                 break;
             case "selfCleanOperation":
-                aircon.setSelfCleanOperation(input);
+            changesMade = aircon.setSelfCleanOperation(input);
                 break;
             case "selfCleanReset":
-                aircon.setSelfCleanReset(input);
+            changesMade = aircon.setSelfCleanReset(input);
                 break;
             case "operation":
-                aircon.setOperation(input);
+            changesMade =  aircon.setOperation(input);
                 break;
-
 
             // Add more cases as needed
             default:
                 System.out.println("Unknown topic");
                 break;
         }
+        return changesMade;
     }
-
-
-
-
-
 
     static class Consumer implements Runnable {
         @Override
         public void run() {
             try {
                 while (true) {
-                    //System.out.println(messageQueue.isEmpty());
+                    // System.out.println(messageQueue.isEmpty());
                     // Take the message from the queue
                     topicMessage pair = messageQueue.take(); // This will block if the queue is empty
-                   System.out.println("Processing: " + pair);
+                    System.out.println("Processing: " + pair);
 
-                    try{
-                    client.publish(pair.getTopic(),pair.getMessage());
-                    // Here, you can process the message and topic, for example, publish to MQTT server
-                    } catch (Exception e){
+                    try {
+                        client.publish(pair.getTopic(), pair.getMessage());
+                        // Here, you can process the message and topic, for example, publish to MQTT
+                        // server
+                    } catch (Exception e) {
 
                         System.out.println("Error: " + e.toString());
                     }
@@ -901,7 +817,10 @@ public class MqttAirConBridge {
     }
 
 
+    
+
+        
 
 
-
+    
 }

@@ -13,6 +13,10 @@ import org.json.JSONObject;
 public class Main {
     public static void main(String[] args) {
 
+        Boolean spamMode = true; //TO be written, when false the mqtt messages will be sent at a static periodic interval
+        //with AC object being fully threadsafe this can be done. And then mqtt messages will be sent every 5seconds if change 
+        //every 60 seconds if no change. This will allow for batch sends. 
+
         //Variable setup
         List<AirCon> aircons = new ArrayList<>();
         String settingsFilePath = "config.json";
@@ -22,6 +26,7 @@ public class Main {
         String mqttHostname = "";
         String mqttUsername = "";
         String mqttPassword = "";
+    
 
         // Read settings from file if it exists
         File settingsFile = new File(settingsFilePath);
@@ -74,6 +79,7 @@ public class Main {
                 for (int i = 0; i < airconSettings.length(); i++) {
                     JSONObject airconSetting = airconSettings.getJSONObject(i);
                     AirCon aircon = new AirCon();
+                    aircon.spamMode = spamMode;
 
                     // Ensure required settings are defined
                     if (!airconSetting.has("hostname") || !airconSetting.has("port") ||
@@ -165,7 +171,7 @@ public class Main {
 
             if (mqtt) {
                 mqttService = new MqttAirConBridge(aircons, mqttHostname, interval, mqttUsername,
-                        mqttPassword);
+                        mqttPassword, spamMode);
             }
 
 
