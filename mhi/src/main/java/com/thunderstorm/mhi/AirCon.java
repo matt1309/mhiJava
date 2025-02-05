@@ -32,6 +32,7 @@ public class AirCon {
     public final Object lock = new Object();
     // private AtomicBoolean is
     public AtomicBoolean isSending = new AtomicBoolean(false);
+public int delayBuffer =0;
 
     // private List<String> commands = Arrays.asList("Operation", "OperationMode",
     // "AirFlow", "WindDirectionUD", "WindDirectionLR", "PresetTemp", "Entrust");
@@ -39,17 +40,17 @@ public class AirCon {
     // ----------------// Attribute definitions //----------------//
     public RacParser parser = new RacParser();
 
-    private String hostname;
+    private String hostname="127.0.0.1";
     private String port = "5443";
-    private String DeviceID;
-    private String OperatorID;
-    private String AirConID;
+    private String DeviceID="f9276726d8e7";
+    private String OperatorID ="openhab";
+    private String AirConID="f9276726d8e7";
 
     // private MqttAirConBridge mqttService;
     boolean spamMode = false;
-    boolean status;
+    boolean status=false;
     String firmware;
-    int connectedAccounts;
+    int connectedAccounts=-1;
 
     private boolean outdoorTemperature;
     private Boolean Operation = false;
@@ -120,7 +121,7 @@ public class AirCon {
 
     public boolean setport(String port) {
         synchronized (lock) {
-            if (!this.port.equals(port)) {
+            if (this.port == null || !this.port.equals(port)) {
                 this.port = port;
                 return true;
             } else {
@@ -137,7 +138,7 @@ public class AirCon {
 
     public boolean setDeviceID(String DeviceID) {
         synchronized (lock) {
-            if (!this.DeviceID.equals(DeviceID)) {
+            if (this.DeviceID == null || !this.DeviceID.equals(DeviceID)) {
                 this.DeviceID = DeviceID;
                 return true;
             } else {
@@ -154,7 +155,7 @@ public class AirCon {
 
     public boolean setOperatorID(String OperatorID) {
         synchronized (lock) {
-            if (!this.OperatorID.equals(OperatorID)) {
+            if (this.OperatorID == null ||!this.OperatorID.equals(OperatorID)) {
                 this.OperatorID = OperatorID;
                 return true;
             } else {
@@ -171,7 +172,7 @@ public class AirCon {
 
     public boolean setAirConID(String AirConID) {
         synchronized (lock) {
-            if (!this.AirConID.equals(AirConID)) {
+            if (this.AirConID == null || !this.AirConID.equals(AirConID)) {
                 this.AirConID = AirConID;
                 return true;
             } else {
@@ -205,7 +206,7 @@ public class AirCon {
 
     public boolean setfirmware(String firmware) {
         synchronized (lock) {
-            if (!this.firmware.equals(firmware)) {
+            if (this.firmware == null || !this.firmware.equals(firmware)) {
                 this.firmware = firmware;
                 return true;
             } else {
@@ -222,7 +223,7 @@ public class AirCon {
 
     public boolean setconnectedAccounts(int connectedAccounts) {
         synchronized (lock) {
-            if (this.connectedAccounts != connectedAccounts) {
+            if (this.connectedAccounts == -1 || this.connectedAccounts != connectedAccounts) {
                 this.connectedAccounts = connectedAccounts;
                 return true;
             } else {
@@ -477,7 +478,7 @@ public class AirCon {
 
     public boolean setErrorCode(String errorCode) {
         synchronized (lock) {
-            if (!this.errorCode.equals(errorCode)) {
+            if (this.errorCode == null || !this.errorCode.equals(errorCode)) {
                 this.errorCode = errorCode;
                 return true;
             } else {
@@ -752,7 +753,7 @@ public class AirCon {
             new Thread(() -> {
 
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(this.delayBuffer);
                     synchronized (lock) {
                         String command = this.parser.toBase64();
                         Map<String, Object> contents = new HashMap<>();

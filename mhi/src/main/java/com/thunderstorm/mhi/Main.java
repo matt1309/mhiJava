@@ -92,6 +92,7 @@ public class Main {
                     JSONObject airconSetting = airconSettings.getJSONObject(i);
                     AirCon aircon = new AirCon();
                     aircon.spamMode = spamMode;
+                    aircon.delayBuffer = 5000; //to add this to settings only used if spamMode = false;
 
                     // Ensure required settings are defined
                     if (!airconSetting.has("hostname") || !airconSetting.has("port") ||
@@ -99,6 +100,7 @@ public class Main {
                         throw new JSONException("Missing required aircon settings in config.json");
                     }
 
+                    
                     aircon.sethostname(airconSetting.getString("hostname"));
                     aircon.setport(airconSetting.getString("port"));
                     aircon.setDeviceID(airconSetting.getString("deviceID"));

@@ -1,6 +1,7 @@
 {
 
-"globalSettings" :{"AirconQueryinterval": 60000
+"globalSettings" :{"AirconQueryinterval": 60000,
+"spamMode": false
                     },
 
 

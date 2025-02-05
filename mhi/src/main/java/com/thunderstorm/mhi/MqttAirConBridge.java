@@ -184,9 +184,35 @@ public class MqttAirConBridge {
                 // sending command to the aircon unit itself
                 aircon.sendAircoCommand();
 
+                if(!aircon.spamMode){
+
+                    //thread to wait until the atomic bool has updated 
+                    new Thread(() -> {
+                        int timeWaited=0;
+                        while (aircon.isSending.get()) {
+                            try {
+            
+                                //publishNow(aircon);
+                                System.out.println("Waiting to send data to aircon: SecondsWaited: " + timeWaited + ". Esimate remaining time: " + (aircon.delayBuffer - timeWaited));
+            
+                                Thread.sleep(1000);
+                                timeWaited = timeWaited + 1000; //sleep for second before re-checking is sending has been finished
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        publishNow(aircon);
+                    }).start();
                 
 
-                publishNow(aircon);
+                }else{
+
+                    publishNow(aircon);
+
+                }
+                
+
+                
             } catch (Exception e) {
 
                 System.out.println(e.toString());
