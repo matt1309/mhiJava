@@ -30,7 +30,7 @@ import org.json.JSONObject;
 public class AirCon {
 
     public final Object lock = new Object();
-   // private AtomicBoolean is
+    // private AtomicBoolean is
     public AtomicBoolean isSending = new AtomicBoolean(false);
 
     // private List<String> commands = Arrays.asList("Operation", "OperationMode",
@@ -46,7 +46,7 @@ public class AirCon {
     private String AirConID;
 
     // private MqttAirConBridge mqttService;
-    boolean spamMode=false;
+    boolean spamMode = false;
     boolean status;
     String firmware;
     int connectedAccounts;
@@ -100,7 +100,7 @@ public class AirCon {
             return hostname;
         }
     }
-    
+
     public boolean sethostname(String hostname) {
         synchronized (lock) {
             if (!this.hostname.equals(hostname)) {
@@ -111,13 +111,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public String getport() {
         synchronized (lock) {
             return port;
         }
     }
-    
+
     public boolean setport(String port) {
         synchronized (lock) {
             if (!this.port.equals(port)) {
@@ -128,13 +128,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public String getDeviceID() {
         synchronized (lock) {
             return DeviceID;
         }
     }
-    
+
     public boolean setDeviceID(String DeviceID) {
         synchronized (lock) {
             if (!this.DeviceID.equals(DeviceID)) {
@@ -145,13 +145,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public String getOperatorID() {
         synchronized (lock) {
             return OperatorID;
         }
     }
-    
+
     public boolean setOperatorID(String OperatorID) {
         synchronized (lock) {
             if (!this.OperatorID.equals(OperatorID)) {
@@ -162,13 +162,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public String getAirConID() {
         synchronized (lock) {
             return AirConID;
         }
     }
-    
+
     public boolean setAirConID(String AirConID) {
         synchronized (lock) {
             if (!this.AirConID.equals(AirConID)) {
@@ -179,13 +179,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public boolean getstatus() {
         synchronized (lock) {
             return status;
         }
     }
-    
+
     public boolean setstatus(boolean status) {
         synchronized (lock) {
             if (this.status != status) {
@@ -196,13 +196,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public String getfirmware() {
         synchronized (lock) {
             return firmware;
         }
     }
-    
+
     public boolean setfirmware(String firmware) {
         synchronized (lock) {
             if (!this.firmware.equals(firmware)) {
@@ -213,13 +213,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public int getconnectedAccounts() {
         synchronized (lock) {
             return connectedAccounts;
         }
     }
-    
+
     public boolean setconnectedAccounts(int connectedAccounts) {
         synchronized (lock) {
             if (this.connectedAccounts != connectedAccounts) {
@@ -230,13 +230,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public boolean getOutdoorTemperature() {
         synchronized (lock) {
             return outdoorTemperature;
         }
     }
-    
+
     public boolean setOutdoorTemperature(boolean outdoorTemperature) {
         synchronized (lock) {
             if (this.outdoorTemperature != outdoorTemperature) {
@@ -247,13 +247,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public Boolean getOperation() {
         synchronized (lock) {
             return Operation;
         }
     }
-    
+
     public boolean setOperation(Boolean operation) {
         synchronized (lock) {
             if (!this.Operation.equals(operation)) {
@@ -264,13 +264,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public int getOperationMode() {
         synchronized (lock) {
             return OperationMode;
         }
     }
-    
+
     public boolean setOperationMode(int operationMode) {
         synchronized (lock) {
             if (this.OperationMode != operationMode) {
@@ -281,13 +281,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public int getAirFlow() {
         synchronized (lock) {
             return AirFlow;
         }
     }
-    
+
     public boolean setAirFlow(int airFlow) {
         synchronized (lock) {
             if (this.AirFlow != airFlow) {
@@ -298,13 +298,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public int getWindDirectionUD() {
         synchronized (lock) {
             return WindDirectionUD;
         }
     }
-    
+
     public boolean setWindDirectionUD(int windDirectionUD) {
         synchronized (lock) {
             if (this.WindDirectionUD != windDirectionUD) {
@@ -315,13 +315,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public int getWindDirectionLR() {
         synchronized (lock) {
             return WindDirectionLR;
         }
     }
-    
+
     public boolean setWindDirectionLR(int windDirectionLR) {
         synchronized (lock) {
             if (this.WindDirectionLR != windDirectionLR) {
@@ -332,13 +332,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public float getPresetTemp() {
         synchronized (lock) {
             return PresetTemp;
         }
     }
-    
+
     public boolean setPresetTemp(float presetTemp) {
         synchronized (lock) {
             if (this.PresetTemp != presetTemp) {
@@ -349,13 +349,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public boolean getEntrust() {
         synchronized (lock) {
             return Entrust;
         }
     }
-    
+
     public boolean setEntrust(boolean entrust) {
         synchronized (lock) {
             if (this.Entrust != entrust) {
@@ -366,13 +366,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public int getModelNr() {
         synchronized (lock) {
             return ModelNr;
         }
     }
-    
+
     public boolean setModelNr(int modelNr) {
         synchronized (lock) {
             if (this.ModelNr != modelNr) {
@@ -383,13 +383,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public boolean getVacant() {
         synchronized (lock) {
             return Vacant;
         }
     }
-    
+
     public boolean setVacant(boolean vacant) {
         synchronized (lock) {
             if (this.Vacant != vacant) {
@@ -400,13 +400,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public boolean getCoolHotJudge() {
         synchronized (lock) {
             return CoolHotJudge;
         }
     }
-    
+
     public boolean setCoolHotJudge(boolean coolHotJudge) {
         synchronized (lock) {
             if (this.CoolHotJudge != coolHotJudge) {
@@ -417,13 +417,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public float getIndoorTemp() {
         synchronized (lock) {
             return indoorTemp;
         }
     }
-    
+
     public boolean setIndoorTemp(float indoorTemp) {
         synchronized (lock) {
             if (this.indoorTemp != indoorTemp) {
@@ -434,13 +434,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public float getOutdoorTemp() {
         synchronized (lock) {
             return outdoorTemp;
         }
     }
-    
+
     public boolean setOutdoorTemp(float outdoorTemp) {
         synchronized (lock) {
             if (this.outdoorTemp != outdoorTemp) {
@@ -451,13 +451,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public float getElectric() {
         synchronized (lock) {
             return electric;
         }
     }
-    
+
     public boolean setElectric(float electric) {
         synchronized (lock) {
             if (this.electric != electric) {
@@ -468,13 +468,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public String getErrorCode() {
         synchronized (lock) {
             return errorCode;
         }
     }
-    
+
     public boolean setErrorCode(String errorCode) {
         synchronized (lock) {
             if (!this.errorCode.equals(errorCode)) {
@@ -485,13 +485,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public boolean isSelfCleanOperation() {
         synchronized (lock) {
             return selfCleanOperation;
         }
     }
-    
+
     public boolean setSelfCleanOperation(boolean selfCleanOperation) {
         synchronized (lock) {
             if (this.selfCleanOperation != selfCleanOperation) {
@@ -502,13 +502,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public boolean isSelfCleanReset() {
         synchronized (lock) {
             return selfCleanReset;
         }
     }
-    
+
     public boolean setSelfCleanReset(boolean selfCleanReset) {
         synchronized (lock) {
             if (this.selfCleanReset != selfCleanReset) {
@@ -519,13 +519,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public LocalDateTime isnextRequestAfter() {
         synchronized (lock) {
             return nextRequestAfter;
         }
     }
-    
+
     public boolean setSelfCleanReset(LocalDateTime nextRequestAfter) {
         synchronized (lock) {
             if (!this.nextRequestAfter.equals(nextRequestAfter)) {
@@ -536,13 +536,13 @@ public class AirCon {
             }
         }
     }
-    
+
     public long isminrefreshRate() {
         synchronized (lock) {
             return minrefreshRate;
         }
     }
-    
+
     public boolean setSelfCleanReset(long minrefreshRate) {
         synchronized (lock) {
             if (this.minrefreshRate != minrefreshRate) {
@@ -553,7 +553,6 @@ public class AirCon {
             }
         }
     }
-    
 
     public void printDeviceData() {
         if (gethostname() != null && !gethostname().isEmpty()) {
@@ -743,83 +742,81 @@ public class AirCon {
 
     public void sendAircoCommand() throws Exception {
 
+        // need to edit so isSending doesnt run the code at all. need another elseif i
+        // think
+        if (!spamMode && !isSending.get()) {
 
-        //need to edit so isSending doesnt run the code at all. need another elseif i think 
-            if(!spamMode && !isSending.get()){
-        
-        isSending.set(true);
-        //run everything below in a thread, otherwise instandtly send without issue
+            isSending.set(true);
+            // run everything below in a thread, otherwise instandtly send without issue
 
-        new Thread(() -> {
-           
+            new Thread(() -> {
+
                 try {
                     Thread.sleep(5000);
-                    synchronized(lock){
+                    synchronized (lock) {
                         String command = this.parser.toBase64();
-                         Map<String, Object> contents = new HashMap<>();
-                         contents.put("airconId", AirConID);
-                         contents.put("airconStat", command);
-                         JSONObject result = post("setAirconStat", contents);
-                 
-                         try {
-                             AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
-                             AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
-                             /*
-                              * if(mqttService != null){
-                              * 
-                              * mqttService.publishNow(this);
-                              * }
-                              */
-                            // return true;
-                         } catch (Exception e) {
-                             System.out.println("Failed to translate response");
-                            // return false;
-                 
-                         }finally{
-                 
-                             isSending.set(false);
-                         }
-                     }
+                        Map<String, Object> contents = new HashMap<>();
+                        contents.put("airconId", AirConID);
+                        contents.put("airconStat", command);
+                        JSONObject result = post("setAirconStat", contents);
 
-                    
+                        try {
+                            AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
+                            AirCon.this.parser
+                                    .translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
+                            /*
+                             * if(mqttService != null){
+                             * 
+                             * mqttService.publishNow(this);
+                             * }
+                             */
+                            // return true;
+                        } catch (Exception e) {
+                            System.out.println("Failed to translate response");
+                            // return false;
+
+                        } finally {
+
+                            isSending.set(false);
+                        }
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            
-        }).start();
 
+            }).start();
 
-        
-       
-    }else if(spamMode) {
+        } else if (spamMode) {
 
-        synchronized(lock){
-            String command = this.parser.toBase64();
-             Map<String, Object> contents = new HashMap<>();
-             contents.put("airconId", AirConID);
-             contents.put("airconStat", command);
-             JSONObject result = post("setAirconStat", contents);
-     
-             try {
-                 AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
-                 AirCon.this.parser.translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
-                 /*
-                  * if(mqttService != null){
-                  * 
-                  * mqttService.publishNow(this);
-                  * }
-                  */
-                // return true;
-             } catch (Exception e) {
-                 System.out.println("Failed to translate response");
-                 //return false;
-     
-             }finally{
-     
-                 isSending.set(false);
-             }
-         }
-    }
+            synchronized (lock) {
+                String command = this.parser.toBase64();
+                Map<String, Object> contents = new HashMap<>();
+                contents.put("airconId", AirConID);
+                contents.put("airconStat", command);
+                JSONObject result = post("setAirconStat", contents);
+
+                try {
+                    AirCon.this.setAirConID(((JSONObject) result.get("contents")).get("airconId").toString());
+                    AirCon.this.parser
+                            .translateBytes(((JSONObject) result.get("contents")).get("airconStat").toString());
+                    /*
+                     * if(mqttService != null){
+                     * 
+                     * mqttService.publishNow(this);
+                     * }
+                     */
+                    // return true;
+                } catch (Exception e) {
+                    System.out.println("Failed to translate response");
+                    // return false;
+
+                } finally {
+
+                    isSending.set(false);
+                }
+            }
+        }
     }
 
     // ----------------// Parser Code //----------------//

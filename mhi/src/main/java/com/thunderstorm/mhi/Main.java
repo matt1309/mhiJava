@@ -13,20 +13,21 @@ import org.json.JSONObject;
 public class Main {
     public static void main(String[] args) {
 
-        Boolean spamMode = true; //TO be written, when false the mqtt messages will be sent at a static periodic interval
-        //with AC object being fully threadsafe this can be done. And then mqtt messages will be sent every 5seconds if change 
-        //every 60 seconds if no change. This will allow for batch sends. 
+        Boolean spamMode = true; // TO be written, when false the mqtt messages will be sent at a static periodic
+                                 // interval
+        // with AC object being fully threadsafe this can be done. And then mqtt
+        // messages will be sent every 5seconds if change
+        // every 60 seconds if no change. This will allow for batch sends.
 
-        //Variable setup
+        // Variable setup
         List<AirCon> aircons = new ArrayList<>();
         String settingsFilePath = "config.json";
-        //Default query frequency (Assuming no requests)
-        int interval = 60000; //60 seconds
-        boolean mqtt = false; //Default is not to use mqtt. 
+        // Default query frequency (Assuming no requests)
+        int interval = 60000; // 60 seconds
+        boolean mqtt = false; // Default is not to use mqtt.
         String mqttHostname = "";
         String mqttUsername = "";
         String mqttPassword = "";
-    
 
         // Read settings from file if it exists
         File settingsFile = new File(settingsFilePath);
@@ -53,7 +54,6 @@ public class Main {
                             !mqttSetting.has("username") || !mqttSetting.has("password")) {
                         throw new JSONException("Missing required MQTT settings in config.json");
 
-                        
                     }
                     // edit so username and password are optional and add features like tls etc
                     mqttHostname = mqttSetting.get("hostname").toString();
@@ -62,18 +62,30 @@ public class Main {
 
                 }
 
-                if(settings.has("globalSettings") && (((JSONObject) settings.get("globalSettings")).has("AirconQueryinterval"))){
+                if (settings.has("globalSettings")
+                        && (((JSONObject) settings.get("globalSettings")).has("AirconQueryinterval"))) {
 
+                    try {
+                        interval = (int) (((Number) ((JSONObject) settings.get("globalSettings"))
+                                .get("AirconQueryinterval")).floatValue());
+                        if(((JSONObject) settings.get("globalSettings")).has("spamMode")){
 
-                    try{
-                        interval = (int) (((Number) ((JSONObject) settings.get("globalSettings")).get("AirconQueryinterval")).floatValue());
-                    }catch (Exception e){
+                            try{
+                            spamMode = (boolean) ((JSONObject) settings.get("globalSettings")).get("spamMode");
+                            }catch (Exception e){
+
+                                spamMode = false;
+                            }
+
+                        }
+                    } catch (Exception e) {
 
                         System.out.println("Error in type of number: " + e.toString());
                     }
 
-
                 }
+
+                
 
                 // Load aircon settings
                 for (int i = 0; i < airconSettings.length(); i++) {
@@ -167,35 +179,29 @@ public class Main {
         // Setup MQTT bridge
         // String mqttHostname = "tcp://192.168.0.101";
         try {
-        MqttAirConBridge mqttService = null;
+            MqttAirConBridge mqttService = null;
 
             if (mqtt) {
                 mqttService = new MqttAirConBridge(aircons, mqttHostname, interval, mqttUsername,
                         mqttPassword, spamMode);
             }
 
-
             while (true) {
                 try {
                     for (AirCon aircon : aircons) {
                         System.out.println("Checking in with aircon unit " + aircon.getAirConID());
-                        if(aircon.getAirconStats(false) & mqtt){
+                        if (aircon.getAirconStats(false) & mqtt) {
 
-                            if(!aircon.getstatus()){
-                            mqttService.logToMQTT(aircon, "Error receiving data from aircon");
-                            
-                            aircon.setstatus(false);
+                            if (!aircon.getstatus()) {
+                                mqttService.logToMQTT(aircon, "Error receiving data from aircon");
 
-                            
-                                
-
+                                aircon.setstatus(false);
 
                                 mqttService.publishNow(aircon);
 
-                            }else if(mqtt){
+                            } else if (mqtt) {
 
-
-                                if(aircon.getstatus()){
+                                if (aircon.getstatus()) {
 
                                     aircon.setstatus(true);
                                     mqttService.publishNow(aircon);
@@ -205,21 +211,15 @@ public class Main {
                                 mqttService.logToMQTT(aircon, "Ok");
                             }
 
-
-
                         }
-                       
-                        System.out.println("Sleeping for " + interval/1000 + " seconds...");
+
+                        System.out.println("Sleeping for " + interval / 1000 + " seconds...");
                     }
                     Thread.sleep(interval);
                 } catch (Exception e) {
                     System.err.println("Error during MQTT loop: " + e.getMessage());
                 }
             }
-
-
-
-
 
         } catch (Exception e) {
             System.err.println("Error initializing MQTT bridge: " + e.getMessage());

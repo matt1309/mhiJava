@@ -20,7 +20,7 @@ public class MqttAirConBridge {
     private static ConcurrentHashMap<String, List<String>> floatTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, List<String>> intTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, AirCon> airCons = new ConcurrentHashMap<String, AirCon>();
-    private static ConcurrentHashMap<String, String> isRunning = new ConcurrentHashMap<String, String>();
+  //  private static ConcurrentHashMap<String, String> isRunning = new ConcurrentHashMap<String, String>();
     // private static ConcurrentHashMap<String, String> topicAirConLookup = new
     // ConcurrentHashMap<String, String>();
     // private static ConcurrentHashMap<String, Boolean> makingChanges = new
