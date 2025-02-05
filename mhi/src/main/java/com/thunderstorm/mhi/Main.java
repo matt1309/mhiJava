@@ -74,7 +74,7 @@ public class Main {
                             spamMode = (boolean) ((JSONObject) settings.get("globalSettings")).get("spamMode");
                             }catch (Exception e){
 
-                                spamMode = false;
+                                spamMode = true;
                             }
 
                         }
@@ -192,7 +192,7 @@ public class Main {
                         System.out.println("Checking in with aircon unit " + aircon.getAirConID());
                         if (aircon.getAirconStats(false) & mqtt) {
 
-                            if (!aircon.getstatus()) {
+                            if (!aircon.getstatus() && mqtt) {
                                 mqttService.logToMQTT(aircon, "Error receiving data from aircon");
 
                                 aircon.setstatus(false);
