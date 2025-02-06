@@ -1,5 +1,10 @@
 Expose more MQTT options: Like TLS MQTT and more options rather than just username and password support
-Add safety features for values which aren't allowed ie operationMode 0-4 etc.
 
-Rate limiting/overloading MQTT solution. 
-I think sending data using a queue or even just in a seperate thread is better. 
+Add safety features for values which aren't allowed ie operationMode 0-4 etc.
+This I think is the cause of the units sometimes turning off. 
+the remote control for example stops at 18 when in cold mode. 
+
+Users could setup the limits in openhab but in here feels safe enough. 
+
+
+
