@@ -196,7 +196,7 @@ public class Main {
 
                             if (!aircon.getstatus() && mqtt) {
                                 mqttService.logToMQTT(aircon, "Error receiving data from aircon");
-
+                                System.out.println("Error receiving data from aircon");
                                 aircon.setstatus(false);
 
                                 mqttService.publishNow(aircon);
