@@ -5,6 +5,13 @@ A MQTT bridge written in Java to itnerface with Mitsubishi Aircon Units.
 Heavily inspired/ported from the Home Assistant addon:  
 [https://github.com/jeatheak/Mitsubishi-WF-RAC-Integration](https://github.com/jeatheak/Mitsubishi-WF-RAC-Integration)
 
+Uses a java AirCon.java class file that's been created here in case other just want the aircon object that has built
+in parser and get/set methods for each attribute (for thread safety). THe send methods also use AirCon attribute 
+spamMode. If false calling the sendCommand will wait a specific delay to allow you to make more changes and only send one command to the aircon unit rather than sending data to aircon after each change. 
+This is useful for openhab integration where you might change temp using setpoint so go through several temps before reaching your desired one.
+
+Here: https://github.com/matt1309/mhijava2/
+
 ---
  
 ## Installation
