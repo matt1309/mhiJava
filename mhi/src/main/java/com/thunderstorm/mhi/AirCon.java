@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.http.impl.client.CloseableHttpClient;
 //import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -32,7 +33,7 @@ public class AirCon {
     public final Object lock = new Object();
     // private AtomicBoolean is
     public AtomicBoolean isSending = new AtomicBoolean(false);
-public int delayBuffer =0;
+    public int delayBuffer = 0;
 
     // private List<String> commands = Arrays.asList("Operation", "OperationMode",
     // "AirFlow", "WindDirectionUD", "WindDirectionLR", "PresetTemp", "Entrust");
@@ -40,17 +41,18 @@ public int delayBuffer =0;
     // ----------------// Attribute definitions //----------------//
     public RacParser parser = new RacParser();
 
-    private String hostname="127.0.0.1";
+    private String hostname = "127.0.0.1";
     private String port = "5443";
-    private String DeviceID="f9276726d8e7";
-    private String OperatorID ="openhab";
-    private String AirConID="f9276726d8e7";
+    private String DeviceID = "f9276726d8e7";
+    private String OperatorID = "openhab";
+    private String AirConID = "f9276726d8e7";
+    public int timeout = 5000;
 
     // private MqttAirConBridge mqttService;
     boolean spamMode = false;
-    boolean status=false;
+    boolean status = false;
     String firmware;
-    int connectedAccounts=-1;
+    int connectedAccounts = -1;
 
     private boolean outdoorTemperature;
     private Boolean Operation = false;
@@ -155,7 +157,7 @@ public int delayBuffer =0;
 
     public boolean setOperatorID(String OperatorID) {
         synchronized (lock) {
-            if (this.OperatorID == null ||!this.OperatorID.equals(OperatorID)) {
+            if (this.OperatorID == null || !this.OperatorID.equals(OperatorID)) {
                 this.OperatorID = OperatorID;
                 return true;
             } else {
@@ -667,7 +669,15 @@ public int delayBuffer =0;
                     Thread.sleep(waitTime * 1000);
                 }
 
-                httpClient = HttpClientBuilder.create().build();
+                RequestConfig requestConfig = RequestConfig.custom()
+                        .setSocketTimeout(timeout) // 5 seconds
+                        .setConnectTimeout(timeout) // 5 seconds
+                        .build();
+
+                // httpClient = HttpClientBuilder.create().build();
+                httpClient = HttpClientBuilder.create()
+                        .setDefaultRequestConfig(requestConfig)
+                        .build();
                 HttpPost request = new HttpPost(url);
                 request.setHeader("Content-Type", "application/json");
                 request.setEntity(new StringEntity(data.toString()));
