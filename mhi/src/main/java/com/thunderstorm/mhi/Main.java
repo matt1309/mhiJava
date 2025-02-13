@@ -18,6 +18,7 @@ public class Main {
         // with AC object being fully threadsafe this can be done. And then mqtt
         // messages will be sent every 5seconds if change
         // every 60 seconds if no change. This will allow for batch sends.
+        int delaybuffer = 2000;
 
         // Variable setup
         List<AirCon> aircons = new ArrayList<>();
@@ -68,16 +69,29 @@ public class Main {
                     try {
                         interval = (int) (((Number) ((JSONObject) settings.get("globalSettings"))
                                 .get("AirconQueryinterval")).floatValue());
-                        if(((JSONObject) settings.get("globalSettings")).has("spamMode")){
 
-                            try{
-                            spamMode = (boolean) ((JSONObject) settings.get("globalSettings")).get("spamMode");
-                            }catch (Exception e){
+                        if (((JSONObject) settings.get("globalSettings")).has("spamMode")) {
+
+                            try {
+                                spamMode = (boolean) ((JSONObject) settings.get("globalSettings")).get("spamMode");
+                            } catch (Exception e) {
 
                                 spamMode = true;
                             }
-
                         }
+
+                        if (((JSONObject) settings.get("globalSettings")).has("spamModeInterval")) {
+
+                            try {
+                                delaybuffer = (int) ((JSONObject) settings.get("globalSettings"))
+                                        .get("spamModeInterval");
+                                spamMode = false;
+                            } catch (Exception e) {
+
+                                spamMode = true;
+                            }
+                        }
+
                     } catch (Exception e) {
 
                         System.out.println("Error in type of number: " + e.toString());
@@ -85,14 +99,12 @@ public class Main {
 
                 }
 
-                
-
                 // Load aircon settings
                 for (int i = 0; i < airconSettings.length(); i++) {
                     JSONObject airconSetting = airconSettings.getJSONObject(i);
                     AirCon aircon = new AirCon();
                     aircon.spamMode = spamMode;
-                    aircon.delayBuffer = 5000; //to add this to settings only used if spamMode = false;
+                    aircon.delayBuffer = delaybuffer; // to add this to settings only used if spamMode = false;
 
                     // Ensure required settings are defined
                     if (!airconSetting.has("hostname") || !airconSetting.has("port") ||
@@ -100,7 +112,6 @@ public class Main {
                         throw new JSONException("Missing required aircon settings in config.json");
                     }
 
-                    
                     aircon.sethostname(airconSetting.getString("hostname"));
                     aircon.setport(airconSetting.getString("port"));
                     aircon.setDeviceID(airconSetting.getString("deviceID"));
