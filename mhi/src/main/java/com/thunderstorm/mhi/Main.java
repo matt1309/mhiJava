@@ -191,6 +191,9 @@ public class Main {
 
         // Setup MQTT bridge
         // String mqttHostname = "tcp://192.168.0.101";
+
+        while(true){
+
         try {
             MqttAirConBridge mqttService = null;
 
@@ -237,5 +240,14 @@ public class Main {
         } catch (Exception e) {
             System.err.println("Error initializing MQTT bridge: " + e.getMessage());
         }
+
+        System.out.println("Error caught trying again after 30seconds");
+        try{
+        Thread.sleep(30000);
+        } catch (Exception e){
+
+            System.out.println("Error sleeping: " + e.toString());
+        }
+    }
     }
 }
