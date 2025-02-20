@@ -120,7 +120,7 @@ public class MqttAirConBridge {
                     airConIDChanged = (boolTopics.get(topic)).get(0);
                 }
 
-                if (intTopics.containsKey(topic) && (boolTopics.get(topic) != null)) {
+                if (intTopics.containsKey(topic) && (intTopics.get(topic) != null)) {
 
                     int val = Integer.parseInt(new String(message.getPayload()));
                     changesMade = handleTopicInt(topic, val);
@@ -687,6 +687,10 @@ public class MqttAirConBridge {
             changesMade = aircon.setElectric(input);
                 break;
             // Add more cases as needed
+                case "operationMode":
+            changesMade =  aircon.setOperationMode(input);
+                break;
+            // Add more cases as needed
 
             default:
                 System.out.println("Unknown topic: " + topicClean);
@@ -716,10 +720,7 @@ public class MqttAirConBridge {
                 break;
             // Add more cases as needed
 
-            case "operationMode":
-            changesMade =  aircon.setOperationMode(input);
-                break;
-            // Add more cases as needed
+            
             default:
                 System.out.println("Unknown topic: " + topicClean);
                 break;
