@@ -262,7 +262,7 @@ public class MqttAirConBridge {
 
         // Operation topics
         newboolTopics.put(baseTopicWrite + "operation", Arrays.asList(airCon.getAirConID(), "operation"));
-        newfloatTopics.put(baseTopicWrite + "operationMode", Arrays.asList(airCon.getAirConID(), "operationMode"));
+        newintTopics.put(baseTopicWrite + "operationMode", Arrays.asList(airCon.getAirConID(), "operationMode"));
 
         stringTopics.putAll(newstringTopics);
         floatTopics.putAll(newfloatTopics);
@@ -687,10 +687,7 @@ public class MqttAirConBridge {
             changesMade = aircon.setElectric(input);
                 break;
             // Add more cases as needed
-                case "operationMode":
-            changesMade =  aircon.setOperationMode(input);
-                break;
-            // Add more cases as needed
+                
 
             default:
                 System.out.println("Unknown topic: " + topicClean);
@@ -717,6 +714,10 @@ public class MqttAirConBridge {
             // Add more cases as needed
             case "windDirectionLR":
             changesMade = aircon.setWindDirectionLR(input);
+                break;
+            // Add more cases as needed
+            case "operationMode":
+            changesMade =  aircon.setOperationMode(input);
                 break;
             // Add more cases as needed
 
