@@ -52,6 +52,9 @@ java -jar mhi.jar
 ### 3. Topic paths:
 The topic structure is as follows:
 aircon/{airconID}/ReadOnly/{dataName} for state reading
+
+
+Open examples can be fonud in openhabTemplates folder (I will share my final config once finalised)
 aircon/{airconID}/ReadWrite/{dataName} for command writing
 
 Anything posted in ReadWrite is passed to aircon, the response from aircon is then loaded into
