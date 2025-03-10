@@ -1,0 +1,34 @@
+Group gAirCon "AirCon"
+
+Number ShedSetTemp "Shed Set temp" (gAirCon) { channel="mqtt:topic:mything:ShedSetTemp" }
+Number ShedIndoorTemp "Shed Temp" (gAirCon) { channel="mqtt:topic:mything:ShedIndoorTemp" }
+Number ShedOutdoorTemp "Shed Outside Temp" (gAirCon) { channel="mqtt:topic:mything:ShedOutdoorTemp" }
+
+String AirConID "AirCon ID" (gAirCon) { channel="mqtt:topic:mything:AirConID" }
+String Hostname "Hostname" (gAirCon) { channel="mqtt:topic:mything:Hostname" }
+String Port "Port" (gAirCon) { channel="mqtt:topic:mything:Port" }
+String DeviceID "Device ID" (gAirCon) { channel="mqtt:topic:mything:DeviceID" }
+String ErrorCode "Error Code" (gAirCon) { channel="mqtt:topic:mything:ErrorCode" }
+
+
+Switch Status "AirCon Status" (gAirCon) { channel="mqtt:topic:mything:Status" }
+
+
+DateTime LastUpdated "Last Updated [%1$tF %1$tT]" <time> (gAirCon)
+
+
+
+Switch Entrust "Entrust" (gAirCon) { channel="mqtt:topic:mything:Entrust" }
+Switch Vacant "Vacant" (gAirCon) { channel="mqtt:topic:mything:Vacant" }
+Switch CoolHotJudge "Cool/Hot Judge" (gAirCon) { channel="mqtt:topic:mything:CoolHotJudge" }
+Switch SelfCleanOperation "Self-Clean Operation" (gAirCon) { channel="mqtt:topic:mything:SelfCleanOperation" }
+Switch SelfCleanReset "Self-Clean Reset" (gAirCon) { channel="mqtt:topic:mything:SelfCleanReset" }
+
+Number Electric "Electric" (gAirCon) { channel="mqtt:topic:mything:Electric" }
+
+String AirFlow "Air Flow" (gAirCon) { channel="mqtt:topic:mything:AirFlow" }
+String WindDirectionUD "Wind Direction UD" (gAirCon) { channel="mqtt:topic:mything:WindDirectionUD" }
+String WindDirectionLR "Wind Direction LR" (gAirCon) { channel="mqtt:topic:mything:WindDirectionLR" }
+
+Switch Operation "Operation" (gAirCon) { channel="mqtt:topic:mything:Operation" }
+String OperationMode "Operation Mode" (gAirCon) { channel="mqtt:topic:mything:OperationMode" }
