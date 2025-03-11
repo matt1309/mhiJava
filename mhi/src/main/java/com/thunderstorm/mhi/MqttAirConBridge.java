@@ -104,7 +104,7 @@ public class MqttAirConBridge {
                     String val = new String(message.getPayload());
                     changesMade =  handleTopicString(topic, val);
                     System.out.println("String value received from: " + topic + " with value: " + val);
-                  //  changesMade = true;
+                    changesMade = true;
                     airConsChanged.add((stringTopics.get(topic)).get(0));
                     airConIDChanged = stringTopics.get(topic).get(0);
 
@@ -115,7 +115,7 @@ public class MqttAirConBridge {
                     Boolean val = Boolean.parseBoolean(new String(message.getPayload()));
                     changesMade = handleTopicBool(topic, val);
                     System.out.println("Boolean values received from: " + topic + " with value: " + val);
-                    //changesMade = true;
+                    changesMade = true;
                     airConsChanged.add((boolTopics.get(topic)).get(0));
                     airConIDChanged = (boolTopics.get(topic)).get(0);
                 }
@@ -125,7 +125,7 @@ public class MqttAirConBridge {
                     int val = Integer.parseInt(new String(message.getPayload()));
                     changesMade = handleTopicInt(topic, val);
                     System.out.println("Int values received from: " + topic + " with value: " + val);
-                  //  changesMade = true;
+                    changesMade = true;
                     airConsChanged.add((intTopics.get(topic)).get(0));
                     airConIDChanged = (intTopics.get(topic)).get(0);
                 }
@@ -133,6 +133,7 @@ public class MqttAirConBridge {
                 if (changesMade) {
 
                     //no need to have a set here it's only ever going to be of size 1. 
+                    System.out.println("Sending to aircon");
                     updateAirCon(airConsChanged);
                     //updateAirCon(airConIDChanged);
 
