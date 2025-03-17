@@ -24,7 +24,9 @@ To integrate this library into your project, add the following dependencies to y
 ```json
   {
 
-"globalSettings" :{"AirconQueryinterval": 30000
+"globalSettings" :{"AirconQueryinterval": 30000,
+                   "spamMode": false,
+                   "spamModeInterval": 3000
                     },
 
 
