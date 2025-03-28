@@ -59,9 +59,11 @@ public class MqttAirConBridge {
         if (!username.isEmpty() && !password.isEmpty()) {
             options.setUserName(username);
             options.setPassword(password.toCharArray());
+            
         }
 
         options.setMaxInflight(50);
+        options.setCleanSession(false);
       
 
         client.setCallback(new MqttCallback() {
@@ -71,7 +73,22 @@ public class MqttAirConBridge {
                 while (!client.isConnected()) {
                     try {
                         Thread.sleep(5000);
-                        client.connect();
+
+
+
+                        MqttConnectOptions options = new MqttConnectOptions();
+                        if (!username.isEmpty() && !password.isEmpty()) {
+                            options.setUserName(username);
+                            options.setPassword(password.toCharArray());
+                            
+                        }
+                
+                        options.setMaxInflight(50);
+                        options.setCleanSession(false);
+
+
+
+                        client.connect(options);
                         System.out.println("Reconnected to MQTT broker.");
                     } catch (Exception e) {
                         System.out.println("Reconnection attempt failed: " + e.getMessage());
