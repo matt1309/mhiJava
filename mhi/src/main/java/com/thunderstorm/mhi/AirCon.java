@@ -601,7 +601,7 @@ public class AirCon {
         if (getOperationMode() != 0) {
             System.out.println("Operation Mode: " + getOperationMode());
         }
-        if (getAirFlow() != 0) {
+        if (getAirFlow() != -1) {
             System.out.println("AirFlow: " + getAirFlow());
         }
         if (getWindDirectionUD() != -1) {
