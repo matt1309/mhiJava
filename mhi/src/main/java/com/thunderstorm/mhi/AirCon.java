@@ -276,11 +276,7 @@ public class AirCon {
         }
     }
 
-    public boolean getOutdoorTemperature() {
-        synchronized (lock) {
-            return outdoorTemperature;
-        }
-    }
+   
 
     public boolean setOutdoorTemperature(boolean outdoorTemperature) {
         synchronized (lock) {
@@ -624,9 +620,7 @@ public class AirCon {
         if (getconnectedAccounts() != 0) {
             System.out.println("Connected Accounts: " + getconnectedAccounts());
         }
-        if (getOutdoorTemperature()) {
-            System.out.println("Outdoor Temperature: " + getOutdoorTemperature());
-        }
+        
         if (getOperation() != null) {
             System.out.println("Operation: " + getOperation());
         }

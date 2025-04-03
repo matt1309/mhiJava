@@ -6,5 +6,7 @@ the remote control for example stops at 18 when in cold mode.
 
 Users could setup the limits in openhab but in here feels safe enough. 
 
+test the live adding of units to the bridge via mqtt message. 
+add feature to live remove units to the bridge via mqtt message. 
 
 

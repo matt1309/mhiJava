@@ -457,18 +457,7 @@ public class MqttAirConBridge {
                 // hread.sleep(100);
                 // ;
             }
-            if (aircon.getOutdoorTemperature()) {
-                MqttMessage message = new MqttMessage(String.valueOf(aircon.getOutdoorTemperature()).getBytes());
-                message.setQos(1);
-
-                topicMessage tM = new topicMessage(baseTopicRead + "outdoorTemperature", message);
-
-                messageQueue.put(tM);
-
-                // client.publish(baseTopicRead + "outdoorTemperature", message);
-                // Thread.sleep(100);
-                // ;
-            }
+            
             if (aircon.getOperation() != null) {
                 MqttMessage message = new MqttMessage(String.valueOf(aircon.getOperation()).getBytes());
                 message.setQos(1);
