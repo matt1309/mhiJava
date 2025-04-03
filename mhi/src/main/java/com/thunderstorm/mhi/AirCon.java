@@ -55,8 +55,11 @@ public class AirCon {
     private String port = "5443";
     private String DeviceID = "f9276726d8e7";
     private String OperatorID = "openhab";
+    public String name ="";
     private String AirConID = "f9276726d8e7";
     public int timeout = 5000;
+    private String airconLibraryError="";
+    
 
     // private MqttAirConBridge mqttService;
     boolean spamMode = false;
@@ -80,6 +83,7 @@ public class AirCon {
     private float outdoorTemp = -100.00f;
     private float electric = -1.0f;
     private String errorCode;
+    
 
     private boolean selfCleanOperation = false;
     private boolean selfCleanReset = false;
@@ -113,6 +117,34 @@ public class AirCon {
             return hostname;
         }
     }
+
+    
+    public String getName() {
+        synchronized (lock) {
+            return name;
+        }
+    }
+
+    public String getairconLibraryError() {
+        synchronized (lock) {
+            return airconLibraryError;
+        }
+    }
+
+
+    public boolean setairconLibraryError(String airconLibraryError) {
+        synchronized (lock) {
+            if (!this.airconLibraryError.equals(airconLibraryError)) {
+                this.airconLibraryError = airconLibraryError;
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+
+
 
     public boolean sethostname(String hostname) {
         synchronized (lock) {

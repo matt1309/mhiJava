@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eclipse.paho.client.mqttv3.*;
+import org.json.JSONObject;
 
 public class MqttAirConBridge {
 
@@ -19,7 +20,7 @@ public class MqttAirConBridge {
     private static ConcurrentHashMap<String, List<String>> stringTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, List<String>> floatTopics = new ConcurrentHashMap<String, List<String>>();
     private static ConcurrentHashMap<String, List<String>> intTopics = new ConcurrentHashMap<String, List<String>>();
-    private static ConcurrentHashMap<String, AirCon> airCons = new ConcurrentHashMap<String, AirCon>();
+    private static ConcurrentHashMap<String, AirCon> airCons;
     // private static ConcurrentHashMap<String, String> isRunning = new
     // ConcurrentHashMap<String, String>();
     // private static ConcurrentHashMap<String, String> topicAirConLookup = new
@@ -38,25 +39,28 @@ public class MqttAirConBridge {
     private static MqttClient client; // to make this thread safe with locks
     // private AirCon airCon;
 
-    public MqttAirConBridge(List<AirCon> airConList, String url, int interval, String username, String password,
+    public MqttAirConBridge(ConcurrentHashMap<String, AirCon> airCons, String url, int interval, String username, String password,
             Boolean spamMode)
             throws MqttException {
         // this.airCon = airCon;
+        this.airCons = airCons;
         this.url = url;
         // airCons.put(airCon.getAirConID(), airCon);
 
         // this.clientID = clientID;
         // this.interval = interval;
 
+        
+
         new Thread(new Consumer()).start();
 
         client = new MqttClient("tcp://" + url, MqttClient.generateClientId());
 
-        for (AirCon aircon : airConList) {
+    //    for (AirCon aircon : airConList) {
 
-            airCons.put(aircon.getAirConID(), aircon);
+      //      airCons.put(aircon.getAirConID(), aircon);
 
-        }
+       // }
 
         MqttConnectOptions options = new MqttConnectOptions();
         if (!username.isEmpty() && !password.isEmpty()) {
@@ -99,7 +103,7 @@ public class MqttAirConBridge {
                 Boolean changesMade = false;
                 // this doesnt need to be a set as it's never going to loop, it's single call
                 // function.
-                Set<String> airConsChanged = new HashSet<String>();
+               // Set<String> airConsChanged = new HashSet<String>();
                 String airConIDChanged = "";
 
                 if (floatTopics.containsKey(topic) && (floatTopics.get(topic) != null)) {
@@ -109,7 +113,7 @@ public class MqttAirConBridge {
                     System.out.println("Float values received from: " + topic + " with value: " + val);
                     // changesMade = true;
                     System.out.println(floatTopics.get(topic).get(0));
-                    airConsChanged.add((floatTopics.get(topic)).get(0));
+                  //  airConsChanged.add((floatTopics.get(topic)).get(0));
                     airConIDChanged = floatTopics.get(topic).get(0);
 
                 }
@@ -120,7 +124,7 @@ public class MqttAirConBridge {
                     changesMade = handleTopicString(topic, val);
                     System.out.println("String value received from: " + topic + " with value: " + val);
                     changesMade = true;
-                    airConsChanged.add((stringTopics.get(topic)).get(0));
+                   // airConsChanged.add((stringTopics.get(topic)).get(0));
                     airConIDChanged = stringTopics.get(topic).get(0);
 
                 }
@@ -131,7 +135,7 @@ public class MqttAirConBridge {
                     changesMade = handleTopicBool(topic, val);
                     System.out.println("Boolean values received from: " + topic + " with value: " + val);
                     changesMade = true;
-                    airConsChanged.add((boolTopics.get(topic)).get(0));
+                   // airConsChanged.add((boolTopics.get(topic)).get(0));
                     airConIDChanged = (boolTopics.get(topic)).get(0);
                 }
 
@@ -141,15 +145,30 @@ public class MqttAirConBridge {
                     changesMade = handleTopicInt(topic, val);
                     System.out.println("Int values received from: " + topic + " with value: " + val);
                     changesMade = true;
-                    airConsChanged.add((intTopics.get(topic)).get(0));
+                   // airConsChanged.add((intTopics.get(topic)).get(0));
                     airConIDChanged = (intTopics.get(topic)).get(0);
+                }
+
+                if(topic == "aircon/addNew"){
+
+                    try{
+                        String val = new String(message.getPayload());
+
+                        jsonParser.jsonParser(airCons,new JSONObject(val), MqttAirConBridge.this);
+                      
+
+                    }catch (Exception e){
+                        System.out.println(e.toString());
+                    }
+
+
                 }
 
                 if (changesMade) {
 
                     // no need to have a set here it's only ever going to be of size 1.
                     System.out.println("Sending to aircon");
-                    updateAirCon(airConsChanged);
+                    updateAirCon(airCons.get(airConIDChanged));
                     // updateAirCon(airConIDChanged);
 
                 }
@@ -168,6 +187,7 @@ public class MqttAirConBridge {
         });
         client.connect(options);
 
+        //this needs to be run periodically or at least checked for changes to airCons.
         airCons.forEach((key, value) -> addTopics(value));
 
         /*
@@ -188,14 +208,12 @@ public class MqttAirConBridge {
          */
     }
 
-    public void updateAirCon(Set<String> airConIDs) {
+    public void updateAirCon(AirCon aircon) {
 
         // I've written this wrong, it's never going to loop with how I've written it as
-        // one call will only have
+        // one call will only have. Easy fix but afraid to incase anything breaks atm.
         // one airconID in the set, but oh well, might be useful one day.
-        for (String airconID : airConIDs) {
-
-            AirCon aircon = airCons.get(airconID);
+        // aircon = airCons.get(airconID);
             // might be worth moving this inside the aircon object and locking from inside
             // can make lock private then
 
@@ -236,9 +254,12 @@ public class MqttAirConBridge {
                 System.out.println(e.toString());
             }
         }
-    }
+    
 
     public void addTopics(AirCon airCon) {
+
+        //worth checking if the element already exists in the hashmap before running the code
+
 
         // airCons.put(airCon.getAirConID(), airCon);
         // make sure things aren't null

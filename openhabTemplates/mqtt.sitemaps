@@ -1,8 +1,0 @@
-Text icon="switch" item=Status
-Text item=LastUpdated label="Last updated [%1$tA, %1$tH:%1$tM, %1$td.%1$tm.%1$tY]" icon="temperature"
-Switch icon="switch" item=Operation
-Slider icon="heating" label="Set Temperature [%.1f]" item=ShedSetTemp maxValue=30 minValue=10 step=0.5
-Text item=ShedIndoorTemp label="Shed Temperature"
-Selection item=OperationMode label="Operation Mode" mappings=["Auto"="Auto", "Cool"="Cool", "Heat"="Heat", "Fan Only"="Fan Only", "Dry"="Dry"]
-Selection item=WindDirectionUD label="Fan Up/Down" mappings=["Up/Down Auto"="Up/Down Auto", "Highest"="Highest", "Middle"="Middle", "Normal"="Normal", "Lowest"="Lowest"]
-Selection item=WindDirectionLR label="Fan Left/Right" mappings=["Left/Right Auto"="Left/Right Auto", "Left-Left"="Left-Left", "Left-Center"="Left-Center", "Center-Center"="Center-Center", "Center-Right"="Center-Right", "Right-Right"="Right-Right", "Left-Right"="Left-Right", "Right-Left"="Right-Left"]
