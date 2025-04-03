@@ -37,6 +37,14 @@ public class jsonParser {
 
                     AirCon aircon = aircons.get(airconJson.get("AirConID").toString());
 
+                   // for(//loop jsonobkect){
+                    
+                
+ //               jsonUpdate(aircon, key, vall)}
+
+
+
+
                 } else {
 
                     // make a new aircon element add it to main aircon list and add to MQTT bridge
