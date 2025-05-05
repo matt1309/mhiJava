@@ -1,0 +1,22 @@
+
+
+Bridge mqtt:broker:$deviceID_myMQTTBroker [ host="$MQTTIP", username="$username", password="$password" ]
+
+
+
+
+Thing mqtt:topic:$deviceID "$deviceID" (mqtt:broker:$deviceID_myMQTTBroker) {
+    Channels:
+    Type number : $deviceID_SetTemp "Set temp" [ stateTopic="aircon/$deviceID/ReadOnly/presetTemp", commandTopic="aircon/$deviceID/ReadWrite/presetTemp" ]
+    Type number : $deviceID_IndoorTemp "Temp" [ stateTopic="aircon/$deviceID/ReadOnly/indoorTemp"]
+    Type number : $deviceID_OutdoorTemp "Outside Temp" [ stateTopic="aircon/$deviceID/ReadOnly/outdoorTemp"]
+    Type string : $deviceID_AirConID "AirCon ID" [ stateTopic="aircon/$deviceID/ReadOnly/AirConID"]
+    Type string : $deviceID_Hostname "Hostname" [ stateTopic="aircon/$deviceID/ReadOnly/hostname"]
+    Type string : $deviceID_Port "Port" [ stateTopic="aircon/$deviceID/ReadOnly/port"]
+    Type string : $deviceID_DeviceID "Device ID" [ stateTopic="aircon/$deviceID/ReadOnly/deviceID"]
+    Type string : $deviceID_ErrorCode "Error Code" [ stateTopic="aircon/$deviceID/ReadOnly/errorCode"]
+    Type switch : $deviceID_Status "Status" [ stateTopic="aircon/$deviceID/ReadOnly/status", transformationPattern="MAP:boolswitch.map", commandTopic="aircon/$deviceID/ReadWrite/status", transformationPatternOut="MAP:boolswitch.map" ]
+    Type switch : $deviceID_Entrust "Entrust" [ stateTopic="aircon/$deviceID/ReadOnly/entrust", transformationPattern="MAP:boolswitch.map", commandTopic="aircon/$deviceID/ReadWrite/entrust", transformationPatternOut="MAP:boolswitch.map" ]
+    Type switch : $deviceID_Vacant "Vacant" [ stateTopic="aircon/$deviceID/ReadOnly/vacant", transformationPattern="MAP:boolswitch.map", commandTopic="aircon/$deviceID/ReadWrite/vacant", transformationPatternOut="MAP:boolswitch.map" ]
+    Type switch : $deviceID_CoolHotJudge "Cool/Hot Judge" [ stateTopic="aircon/$deviceID/ReadOnly/coolHotJudge", transformationPattern="MAP:boolswitch.map", commandTopic="aircon/$deviceID/ReadWrite/coolHotJudge", transformationPatternOut="MAP:boolswitch.map" ]
+}

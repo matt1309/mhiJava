@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,6 +23,7 @@ public class Main {
 
         // Variable setup
         List<AirCon> aircons = new ArrayList<>();
+        ConcurrentHashMap<String, AirCon> airCons = new ConcurrentHashMap<String, AirCon>();
         String settingsFilePath = "config.json";
         // Default query frequency (Assuming no requests)
         int interval = 60000; // 60 seconds
@@ -29,6 +31,7 @@ public class Main {
         String mqttHostname = "";
         String mqttUsername = "";
         String mqttPassword = "";
+        Boolean generateTemplates = false;
 
         // Read settings from file if it exists
         File settingsFile = new File(settingsFilePath);
@@ -92,9 +95,27 @@ public class Main {
                             }
                         }
 
+                        if (((JSONObject) settings.get("globalSettings")).has("generateOpenhabTemplates")) {
+
+                            try {
+
+                                if ((boolean) ((JSONObject) settings.get("globalSettings"))
+                                        .get("generateOpenhabTemplates")) {
+
+                                    generateTemplates = true;
+
+                                }
+
+                            } catch (Exception e) {
+
+                                spamMode = true;
+                            }
+                        }
+
                     } catch (Exception e) {
 
                         System.out.println("Error in type of number: " + e.toString());
+
                     }
 
                 }
@@ -104,6 +125,14 @@ public class Main {
                     JSONObject airconSetting = airconSettings.getJSONObject(i);
                     AirCon aircon = new AirCon();
                     aircon.spamMode = spamMode;
+                    try {
+                        aircon.name = airconSetting.get("name").toString();
+                    } catch (Exception e) {
+
+                        System.out.println("Failed to find aircon name: " + e.toString());
+                       
+                    }
+
                     aircon.delayBuffer = delaybuffer; // to add this to settings only used if spamMode = false;
 
                     // Ensure required settings are defined
@@ -116,7 +145,9 @@ public class Main {
                     aircon.setport(airconSetting.getString("port"));
                     aircon.setDeviceID(airconSetting.getString("deviceID"));
                     aircon.setOperatorID(airconSetting.getString("operatorID"));
+                    aircon.setAirConID(airconSetting.getString("deviceID"));
                     aircons.add(aircon);
+                    airCons.put(aircon.getAirConID(),aircon);
                 }
 
             } catch (FileNotFoundException e) {
@@ -170,84 +201,102 @@ public class Main {
                 aircon.setport(port);
                 aircon.setDeviceID(deviceID);
                 aircon.setOperatorID(operatorID);
+                aircon.setAirConID(deviceID);
                 aircons.add(aircon);
+                airCons.put(aircon.getAirConID(),aircon);
 
             } catch (Exception e) {
+                
                 System.err.println("Error configuring aircon from arguments: " + e.getMessage());
             }
         }
 
         // Process each AirCon instance
-        for (AirCon aircon : aircons) {
+        for (String key : airCons.keySet()) {
             try {
+               AirCon aircon = airCons.get(key);
                 aircon.getAirconStats(false);
                 aircon.updateAccountInfo("Europe/London");
                 aircon.printDeviceData();
                 System.out.println(aircon.getconnectedAccounts());
+                aircon.setairconLibraryError("Ok");
             } catch (Exception e) {
+                AirCon aircon = airCons.get(key);
+                aircon.setairconLibraryError("Error processing aircon: " + e.getMessage());
                 System.err.println("Error processing aircon: " + e.getMessage());
             }
+        }
+
+        if (generateTemplates) {
+            System.out.println("Generating openhab templates");
+            openhabTemplateGenerator.openhabTemplateGenerator(airCons, mqttHostname, mqttUsername, mqttPassword);
+
         }
 
         // Setup MQTT bridge
         // String mqttHostname = "tcp://192.168.0.101";
 
-        while(true){
+        while (true) {
 
-        try {
-            MqttAirConBridge mqttService = null;
+            try {
+                MqttAirConBridge mqttService = null;
 
-            if (mqtt) {
-                mqttService = new MqttAirConBridge(aircons, mqttHostname, interval, mqttUsername,
-                        mqttPassword, spamMode);
-            }
+                if (mqtt) {
+                    //swap to passing in the concurrenthashmap of aircons
+                    mqttService = new MqttAirConBridge(airCons, mqttHostname, interval, mqttUsername,
+                            mqttPassword, spamMode);
+                }
 
-            while (true) {
-                try {
-                    for (AirCon aircon : aircons) {
-                        System.out.println("Checking in with aircon unit " + aircon.getAirConID());
-                        if (aircon.getAirconStats(false) & mqtt) {
+                while (true) {
+                    try {
+                        //move this to it's own class so i can add units 
+                        //create local instance of aircons from threadsafe one so looping is safe
+                        for (String key : airCons.keySet())  {
+                            AirCon aircon = airCons.get(key);
+                            System.out.println("Checking in with aircon unit " + aircon.getAirConID());
+                            if (aircon.getAirconStats(false) & mqtt) {
 
-                            if (!aircon.getstatus() && mqtt) {
-                                mqttService.logToMQTT(aircon, "Error receiving data from aircon");
-                                System.out.println("Error receiving data from aircon");
-                                aircon.setstatus(false);
+                                if (!aircon.getstatus() && mqtt) {
+                                    mqttService.logToMQTT(aircon, "Error receiving data from aircon");
+                                    System.out.println("Error receiving data from aircon");
+                                    aircon.setstatus(false);
 
-                                mqttService.publishNow(aircon);
-
-                            } else if (mqtt) {
-
-                                if (aircon.getstatus()) {
-
-                                    aircon.setstatus(true);
                                     mqttService.publishNow(aircon);
 
+                                } else if (mqtt) {
+
+                                    if (aircon.getstatus()) {
+
+                                        aircon.setstatus(true);
+                                        aircon.setairconLibraryError("Ok");
+                                        mqttService.publishNow(aircon);
+
+                                    }
+
+                                    mqttService.logToMQTT(aircon, "Ok");
                                 }
 
-                                mqttService.logToMQTT(aircon, "Ok");
                             }
 
+                            System.out.println("Sleeping for " + interval / 1000 + " seconds...");
                         }
-
-                        System.out.println("Sleeping for " + interval / 1000 + " seconds...");
+                        Thread.sleep(interval);
+                    } catch (Exception e) {
+                        System.err.println("Error during MQTT loop: " + e.getMessage());
                     }
-                    Thread.sleep(interval);
-                } catch (Exception e) {
-                    System.err.println("Error during MQTT loop: " + e.getMessage());
                 }
+
+            } catch (Exception e) {
+                System.err.println("Error initializing MQTT bridge: " + e.getMessage());
             }
 
-        } catch (Exception e) {
-            System.err.println("Error initializing MQTT bridge: " + e.getMessage());
-        }
+            System.out.println("Error caught trying again after 30seconds");
+            try {
+                Thread.sleep(30000);
+            } catch (Exception e) {
 
-        System.out.println("Error caught trying again after 30seconds");
-        try{
-        Thread.sleep(30000);
-        } catch (Exception e){
-
-            System.out.println("Error sleeping: " + e.toString());
+                System.out.println("Error sleeping: " + e.toString());
+            }
         }
-    }
     }
 }

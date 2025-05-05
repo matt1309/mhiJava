@@ -6,5 +6,10 @@ the remote control for example stops at 18 when in cold mode.
 
 Users could setup the limits in openhab but in here feels safe enough. 
 
+test the live adding of units to the bridge via mqtt message. 
+add feature to live remove units to the bridge via mqtt message. 
 
+
+MqttAirConBridge:  to consolidate the handleTOpics functions. I think i can override the function to name the functions 
+the same to remove the need for the if
 

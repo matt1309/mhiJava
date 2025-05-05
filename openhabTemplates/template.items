@@ -1,0 +1,30 @@
+Group gAirCon "AirCon"
+
+Number $deviceID_SetTemp "$name Set temp" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_SetTemp" }
+Number $deviceID_IndoorTemp "$name Temp" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_IndoorTemp" }
+Number $deviceID_OutdoorTemp "$name Outside Temp" (gAirCon) { channel="mqtt:topic:$deviceID:OutdoorTemp" }
+
+String $deviceID_AirConID "$name AirCon ID" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_AirConID" }
+String $deviceID_Hostname "$name Hostname" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_Hostname" }
+String $deviceID_Port "$name Port" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_Port" }
+String $deviceID_DeviceID "$name Device ID" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_DeviceID" }
+String $deviceID_ErrorCode "$name Error Code" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_ErrorCode" }
+
+Switch $deviceID_Status "$name AirCon Status" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_Status" }
+
+DateTime $deviceID_LastUpdated "$name Last Updated [%1$tF %1$tT]" <time> (gAirCon)
+
+Switch $deviceID_Entrust "$name Entrust" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_Entrust" }
+Switch $deviceID_Vacant "$name Vacant" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_Vacant" }
+Switch $deviceID_CoolHotJudge "$name Cool/Hot Judge" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_CoolHotJudge" }
+Switch $deviceID_SelfCleanOperation "$name Self-Clean Operation" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_SelfCleanOperation" }
+Switch $deviceID_SelfCleanReset "$name Self-Clean Reset" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_SelfCleanReset" }
+
+Number $deviceID_Electric "$name Electric" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_Electric" }
+
+String $deviceID_AirFlow "$name Air Flow" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_AirFlow" }
+String $deviceID_WindDirectionUD "$name Wind Direction UD" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_WindDirectionUD" }
+String $deviceID_WindDirectionLR "$name Wind Direction LR" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_WindDirectionLR" }
+
+Switch $deviceID_Operation "$name Operation" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_Operation" }
+String $deviceID_OperationMode "$name Operation Mode" (gAirCon) { channel="mqtt:topic:$deviceID:$deviceID_OperationMode" }

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 //import java.util.HashMap;
@@ -28,6 +29,15 @@ import org.apache.http.util.EntityUtils;
 
 import org.json.JSONObject;
 
+
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+
 public class AirCon {
 
     public final Object lock = new Object();
@@ -45,8 +55,11 @@ public class AirCon {
     private String port = "5443";
     private String DeviceID = "f9276726d8e7";
     private String OperatorID = "openhab";
+    public String name ="";
     private String AirConID = "f9276726d8e7";
     public int timeout = 5000;
+    private String airconLibraryError="";
+    
 
     // private MqttAirConBridge mqttService;
     boolean spamMode = false;
@@ -70,6 +83,7 @@ public class AirCon {
     private float outdoorTemp = -100.00f;
     private float electric = -1.0f;
     private String errorCode;
+    
 
     private boolean selfCleanOperation = false;
     private boolean selfCleanReset = false;
@@ -103,6 +117,34 @@ public class AirCon {
             return hostname;
         }
     }
+
+    
+    public String getName() {
+        synchronized (lock) {
+            return name;
+        }
+    }
+
+    public String getairconLibraryError() {
+        synchronized (lock) {
+            return airconLibraryError;
+        }
+    }
+
+
+    public boolean setairconLibraryError(String airconLibraryError) {
+        synchronized (lock) {
+            if (!this.airconLibraryError.equals(airconLibraryError)) {
+                this.airconLibraryError = airconLibraryError;
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+
+
 
     public boolean sethostname(String hostname) {
         synchronized (lock) {
@@ -234,11 +276,7 @@ public class AirCon {
         }
     }
 
-    public boolean getOutdoorTemperature() {
-        synchronized (lock) {
-            return outdoorTemperature;
-        }
-    }
+   
 
     public boolean setOutdoorTemperature(boolean outdoorTemperature) {
         synchronized (lock) {
@@ -582,16 +620,14 @@ public class AirCon {
         if (getconnectedAccounts() != 0) {
             System.out.println("Connected Accounts: " + getconnectedAccounts());
         }
-        if (getOutdoorTemperature()) {
-            System.out.println("Outdoor Temperature: " + getOutdoorTemperature());
-        }
+        
         if (getOperation() != null) {
             System.out.println("Operation: " + getOperation());
         }
         if (getOperationMode() != 0) {
             System.out.println("Operation Mode: " + getOperationMode());
         }
-        if (getAirFlow() != 0) {
+        if (getAirFlow() != -1) {
             System.out.println("AirFlow: " + getAirFlow());
         }
         if (getWindDirectionUD() != -1) {
@@ -657,7 +693,7 @@ public class AirCon {
             data.put("contents", new JSONObject(contents));
         }
 
-        synchronized (lock) {
+     /*   synchronized (lock) {
             CloseableHttpClient httpClient = null;
             JSONObject jsonResponse = null;
             try {
@@ -700,6 +736,48 @@ public class AirCon {
             }
             return jsonResponse; // Return jsonResponse outside the try-catch block
         }
+   */
+    
+
+ synchronized (lock) {
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .connectTimeout(timeout, TimeUnit.SECONDS)
+                .readTimeout(timeout, TimeUnit.SECONDS)
+                .build();
+        JSONObject jsonResponse = null;
+        try {
+            if (nextRequestAfter == null) {
+                nextRequestAfter = LocalDateTime.now();
+            }
+            long waitTime = Duration.between(LocalDateTime.now(), nextRequestAfter).getSeconds();
+            if (waitTime > 0) {
+                Thread.sleep(waitTime * 1000);
+            }
+    
+            RequestBody body = RequestBody.create(data.toString(), MediaType.get("application/json; charset=utf-8"));
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+    
+            try (Response response = httpClient.newCall(request).execute()) {
+                String responseString = response.body().string();
+                System.out.println("Received response from aircon: " + responseString);
+                jsonResponse = new JSONObject(responseString);
+            }
+    
+            nextRequestAfter = LocalDateTime.now().plusSeconds(minrefreshRate);
+            setstatus(true);
+        } catch (Exception e) {
+            setstatus(false);
+            System.out.println(e.toString());
+        }
+        return jsonResponse; // Return jsonResponse outside the try-catch block
+    }
+  
+
+
+
     }
 
     public String getInfo() throws Exception {

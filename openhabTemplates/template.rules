@@ -1,0 +1,19 @@
+rule "Update MQTT Topic Timestamp"
+when
+    Item $deviceID_Status received update
+then
+    $deviceID_LastUpdated.postUpdate(new DateTimeType())
+end
+
+rule "Check MQTT Topic Inactivity"
+when
+    Time cron "0 * * * * ?" // Runs every minute
+then
+    val lastUpdate = $deviceID_LastUpdated.state as DateTimeType
+    val now = new DateTimeType()
+    val duration = now.getZonedDateTime().toEpochSecond() - lastUpdate.getZonedDateTime().toEpochSecond()
+    if (duration > 120) { // 600 seconds = 10 minutes
+        logInfo("MQTT", "No message received on MQTT topic for more than 1 minutes.")
+        // Add additional actions here
+    }
+end
