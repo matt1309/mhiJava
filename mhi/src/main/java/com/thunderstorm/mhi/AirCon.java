@@ -57,7 +57,7 @@ public class AirCon {
     private String OperatorID = "openhab";
     public String name ="";
     private String AirConID = "f9276726d8e7";
-    public int timeout = 5000;
+    public int timeout = 5;
     private String airconLibraryError="";
     
 
