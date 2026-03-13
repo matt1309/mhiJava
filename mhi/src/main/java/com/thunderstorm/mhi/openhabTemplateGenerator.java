@@ -24,7 +24,7 @@ public class openhabTemplateGenerator {
             for (String airconIDKey : airCons.keySet()) {
                 AirCon aircon = airCons.get(airconIDKey);
 
-                if (aircon.name == null || aircon.name == "") {
+                if (aircon.name == null || aircon.name.isEmpty()) {
                     keywords.put("$name", aircon.getAirConID());
 
                 } else {
@@ -44,7 +44,7 @@ public class openhabTemplateGenerator {
 
                     for (String key : keywords.keySet()) {
 
-                        content.replace(key, keywords.get(key));
+                        content = content.replace(key, keywords.get(key));
                     }
 
                     // Save modified content back to the file

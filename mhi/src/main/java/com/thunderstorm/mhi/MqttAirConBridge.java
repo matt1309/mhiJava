@@ -149,7 +149,7 @@ public class MqttAirConBridge {
                     airConIDChanged = (intTopics.get(topic)).get(0);
                 }
 
-                if(topic == "aircon/addNew"){
+                if(topic.equals("aircon/addNew")){
 
                     try{
                         String val = new String(message.getPayload());
@@ -642,8 +642,8 @@ public class MqttAirConBridge {
                 messageQueue.put(tM);
 
             }
-            if (aircon.isnextRequestAfter() != null) {
-                MqttMessage message = new MqttMessage(String.valueOf(aircon.isnextRequestAfter()).getBytes());
+            if (aircon.getNextRequestAfter() != null) {
+                MqttMessage message = new MqttMessage(String.valueOf(aircon.getNextRequestAfter()).getBytes());
                 message.setQos(1);
 
                 topicMessage tM = new topicMessage(baseTopicRead + "nextRequestAfter", message);
@@ -651,8 +651,8 @@ public class MqttAirConBridge {
                 messageQueue.put(tM);
 
             }
-            if (aircon.isminrefreshRate() != 0) {
-                MqttMessage message = new MqttMessage(String.valueOf(aircon.isminrefreshRate()).getBytes());
+            if (aircon.getMinRefreshRate() != 0) {
+                MqttMessage message = new MqttMessage(String.valueOf(aircon.getMinRefreshRate()).getBytes());
                 message.setQos(1);
 
                 topicMessage tM = new topicMessage(baseTopicRead + "minRefreshRate", message);
@@ -694,8 +694,10 @@ public class MqttAirConBridge {
         String airconID = (floatTopics.get(topic)).get(0);
 
         AirCon aircon = airCons.get(airconID);
-
-        // change depending on how long the intial ids are in topics.
+        if (aircon == null) {
+            System.out.println("Unknown aircon ID: " + airconID);
+            return false;
+        }
 
         switch (topicClean) {
             case "PresetTemp":
@@ -728,7 +730,11 @@ public class MqttAirConBridge {
         String topicClean = intTopics.get(topic).get(1);
         String airconID = intTopics.get(topic).get(0);
 
-        AirCon aircon = airCons.get(airconID); // change depending on how long the intial ids are in topics.
+        AirCon aircon = airCons.get(airconID);
+        if (aircon == null) {
+            System.out.println("Unknown aircon ID: " + airconID);
+            return false;
+        }
 
         switch (topicClean) {
             case "airFlow":
@@ -761,18 +767,10 @@ public class MqttAirConBridge {
         String airconID = stringTopics.get(topic).get(0);
 
         AirCon aircon = airCons.get(airconID);
-
-        // change depending on how long the intial ids are in topics.
-
-        /*
-         * private String hostname;
-         * private String port = "5443";
-         * private String DeviceID;
-         * private String OperatorID;
-         * private String AirConID;
-         * 
-         * 
-         */
+        if (aircon == null) {
+            System.out.println("Unknown aircon ID: " + airconID);
+            return false;
+        }
 
         switch (topicClean) {
             case "hostname":
@@ -808,8 +806,10 @@ public class MqttAirConBridge {
         String airconID = boolTopics.get(topic).get(0);
 
         AirCon aircon = airCons.get(airconID);
-
-        // change depending on how long the intial ids are in topics.
+        if (aircon == null) {
+            System.out.println("Unknown aircon ID: " + airconID);
+            return false;
+        }
 
         switch (topicClean) {
             case "status":

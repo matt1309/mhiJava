@@ -561,15 +561,15 @@ public class AirCon {
         }
     }
 
-    public LocalDateTime isnextRequestAfter() {
+    public LocalDateTime getNextRequestAfter() {
         synchronized (lock) {
             return nextRequestAfter;
         }
     }
 
-    public boolean setSelfCleanReset(LocalDateTime nextRequestAfter) {
+    public boolean setNextRequestAfter(LocalDateTime nextRequestAfter) {
         synchronized (lock) {
-            if (!this.nextRequestAfter.equals(nextRequestAfter)) {
+            if (this.nextRequestAfter == null || !this.nextRequestAfter.equals(nextRequestAfter)) {
                 this.nextRequestAfter = nextRequestAfter;
                 return true;
             } else {
@@ -578,13 +578,13 @@ public class AirCon {
         }
     }
 
-    public long isminrefreshRate() {
+    public long getMinRefreshRate() {
         synchronized (lock) {
             return minrefreshRate;
         }
     }
 
-    public boolean setSelfCleanReset(long minrefreshRate) {
+    public boolean setMinRefreshRate(long minrefreshRate) {
         synchronized (lock) {
             if (this.minrefreshRate != minrefreshRate) {
                 this.minrefreshRate = minrefreshRate;
@@ -669,11 +669,11 @@ public class AirCon {
         if (isSelfCleanReset()) {
             System.out.println("SelfCleanReset: " + isSelfCleanReset());
         }
-        if (isnextRequestAfter() != null) {
-            System.out.println("NextRequestAfter: " + isnextRequestAfter());
+        if (getNextRequestAfter() != null) {
+            System.out.println("NextRequestAfter: " + getNextRequestAfter());
         }
-        if (isminrefreshRate() != 0) {
-            System.out.println("MinRefreshRate: " + isminrefreshRate());
+        if (getMinRefreshRate() != 0) {
+            System.out.println("MinRefreshRate: " + getMinRefreshRate());
         }
     }
 
@@ -1258,7 +1258,7 @@ public class AirCon {
             byte[] vals = new byte[contentByteArray.length - startLength - 21];
             System.arraycopy(contentByteArray, startLength + 19, vals, 0, vals.length);
 
-            for (int i = 0; i < vals.length; i += 4) {
+            for (int i = 0; i + 3 < vals.length; i += 4) {
                 if (vals[i] == -128 && vals[i + 1] == 16) {
                     AirCon.this.setOutdoorTemp(AirCon.outdoorTempList[vals[i + 2] & 0xFF]);
                 }
@@ -1266,7 +1266,8 @@ public class AirCon {
                     AirCon.this.setIndoorTemp(AirCon.indoorTempList[vals[i + 2] & 0xFF]);
                 }
                 if (vals[i] == -108 && vals[i + 1] == 16) {
-                    float value = ((vals[i + 2] & 0xFF) << 8) | (vals[i + 3] & 0xFF);
+                    // Little-endian 16-bit value, scaled by 0.25 to get watts
+                    int value = ((vals[i + 3] & 0xFF) << 8) | (vals[i + 2] & 0xFF);
                     AirCon.this.setElectric(value * 0.25f);
                 }
             }
