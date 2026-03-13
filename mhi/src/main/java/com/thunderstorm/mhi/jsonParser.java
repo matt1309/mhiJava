@@ -28,7 +28,7 @@ public class jsonParser {
 
             try {
                 // aircon already exists, let the settings be updated
-                if (aircons.contains(airconJson.get("AirConID").toString())) {
+                if (aircons.containsKey(airconJson.get("AirConID").toString())) {
 
                     // code for updating aircon units settings via jsonobject so you can update
                     // commands in one go rather than individual mqtt topics.
