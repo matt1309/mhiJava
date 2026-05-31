@@ -1,6 +1,6 @@
-/home/runner/work/mhiJava/mhiJava/mhi/src/main/java/com/thunderstorm/mhi/Main.java
-/home/runner/work/mhiJava/mhiJava/mhi/src/main/java/com/thunderstorm/mhi/MqttAirConBridge.java
-/home/runner/work/mhiJava/mhiJava/mhi/src/main/java/com/thunderstorm/mhi/openhabTemplateGenerator.java
-/home/runner/work/mhiJava/mhiJava/mhi/src/main/java/com/thunderstorm/mhi/AirCon.java
-/home/runner/work/mhiJava/mhiJava/mhi/src/main/java/com/thunderstorm/mhi/jsonParser.java
-/home/runner/work/mhiJava/mhiJava/mhi/src/main/java/com/thunderstorm/mhi/topicMessage.java
+/mhi/src/main/java/com/thunderstorm/mhi/AirCon.java
+/mhi/src/main/java/com/thunderstorm/mhi/jsonParser.java
+/mhi/src/main/java/com/thunderstorm/mhi/Main.java
+/mhi/src/main/java/com/thunderstorm/mhi/topicMessage.java
+/mhi/src/main/java/com/thunderstorm/mhi/openhabTemplateGenerator.java
+/mhi/src/main/java/com/thunderstorm/mhi/MqttAirConBridge.java
