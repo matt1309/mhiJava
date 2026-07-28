@@ -14,7 +14,7 @@ public class AirconState {
     private String port = "5443";
     private String DeviceID = "f9276726d8e7";
     private String OperatorID = "openhab";
-    public String name ="";
+    public String name = "";
     private String AirConID = "f9276726d8e7";
     private String airconLibraryError="";
     
@@ -575,7 +575,7 @@ public class AirconState {
 
         public String toBase64() {
             byte[] command = addCrc16(addVariable(commandToByte(AirconState.this)));
-            byte[] receive = addCrc16(addVariable(recieveToBytes()));
+            byte[] receive = addCrc16(addVariable(receiveToBytes()));
 
             byte[] combined = new byte[command.length + receive.length];
             System.arraycopy(command, 0, combined, 0, command.length);
@@ -732,7 +732,7 @@ public class AirconState {
             return statByte;
         }
 
-        public byte[] recieveToBytes() {
+        public byte[] receiveToBytes() {
             byte[] statByte = new byte[18];
             statByte[5] = (byte) 255;
 
