@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="mhi"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<thing-type id="aircon">
+		<label>MHI Aircon</label>
+		<description>A single Mitsubishi Heavy Industries WF-RAC air conditioning unit.</description>
+		<semantic-equipment-tag>HVAC</semantic-equipment-tag>
+
+		<channels>
+			<channel id="power" typeId="power"/>
+			<channel id="mode" typeId="mode"/>
+			<channel id="fanSpeed" typeId="fanSpeed"/>
+			<channel id="vaneUpDown" typeId="vaneUpDown"/>
+			<channel id="vaneLeftRight" typeId="vaneLeftRight"/>
+			<channel id="targetTemperature" typeId="targetTemperature"/>
+			<channel id="indoorTemperature" typeId="indoorTemperature"/>
+			<channel id="outdoorTemperature" typeId="outdoorTemperature"/>
+			<channel id="electric" typeId="electric"/>
+			<channel id="errorCode" typeId="errorCode"/>
+			<channel id="entrust" typeId="entrust"/>
+			<channel id="vacant" typeId="vacant"/>
+			<channel id="coolHotJudge" typeId="coolHotJudge"/>
+			<channel id="selfCleanOperation" typeId="selfCleanOperation"/>
+			<channel id="selfCleanReset" typeId="selfCleanReset"/>
+		</channels>
+
+		<representation-property>deviceId</representation-property>
+
+		<config-description>
+			<parameter name="hostname" type="text" required="true">
+				<label>Hostname</label>
+				<description>Hostname or IP address of the aircon unit.</description>
+				<context>network-address</context>
+			</parameter>
+			<parameter name="port" type="integer" required="false">
+				<label>Port</label>
+				<description>Port the aircon unit listens on.</description>
+				<default>51443</default>
+			</parameter>
+			<parameter name="deviceId" type="text" required="true">
+				<label>Device ID</label>
+				<description>Device ID (MAC style identifier) of the aircon unit.</description>
+			</parameter>
+			<parameter name="operatorId" type="text" required="false">
+				<label>Operator ID</label>
+				<description>Operator ID used when registering with the unit.</description>
+				<default>openhab</default>
+				<advanced>true</advanced>
+			</parameter>
+			<parameter name="refreshInterval" type="integer" required="false" unit="s" min="1">
+				<label>Refresh Interval</label>
+				<description>How often (in seconds) the unit is polled for its state.</description>
+				<default>60</default>
+			</parameter>
+			<parameter name="spamMode" type="boolean" required="false">
+				<label>Spam Mode</label>
+				<description>When enabled, commands are sent to the unit immediately. When disabled, rapid consecutive
+					changes are coalesced so only the final state is sent after the debounce interval.</description>
+				<default>false</default>
+				<advanced>true</advanced>
+			</parameter>
+			<parameter name="spamModeInterval" type="integer" required="false" unit="ms" min="0">
+				<label>Spam Mode Interval</label>
+				<description>Debounce window in milliseconds used when spam mode is disabled.</description>
+				<default>3000</default>
+				<advanced>true</advanced>
+			</parameter>
+		</config-description>
+	</thing-type>
+
+	<channel-type id="power">
+		<item-type>Switch</item-type>
+		<label>Power</label>
+		<description>Turns the aircon unit on or off.</description>
+		<category>Switch</category>
+		<tags>
+			<tag>Switch</tag>
+			<tag>Power</tag>
+		</tags>
+	</channel-type>
+
+	<channel-type id="mode">
+		<item-type>String</item-type>
+		<label>Operation Mode</label>
+		<description>The operating mode of the unit.</description>
+		<tags>
+			<tag>Control</tag>
+			<tag>Mode</tag>
+		</tags>
+		<state>
+			<options>
+				<option value="auto">Auto</option>
+				<option value="cool">Cool</option>
+				<option value="heat">Heat</option>
+				<option value="dry">Dry</option>
+				<option value="fan">Fan</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="fanSpeed">
+		<item-type>String</item-type>
+		<label>Fan Speed</label>
+		<description>The fan speed of the unit.</description>
+		<tags>
+			<tag>Control</tag>
+			<tag>Wind</tag>
+		</tags>
+		<state>
+			<options>
+				<option value="auto">Auto</option>
+				<option value="2">Low</option>
+				<option value="3">Medium</option>
+				<option value="4">High</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="vaneUpDown">
+		<item-type>String</item-type>
+		<label>Vane Up/Down</label>
+		<description>Vertical air flow direction (0 = swing, 1-4 = fixed positions).</description>
+		<tags>
+			<tag>Control</tag>
+			<tag>Wind</tag>
+		</tags>
+		<state>
+			<options>
+				<option value="0">Swing</option>
+				<option value="1">Position 1</option>
+				<option value="2">Position 2</option>
+				<option value="3">Position 3</option>
+				<option value="4">Position 4</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="vaneLeftRight">
+		<item-type>String</item-type>
+		<label>Vane Left/Right</label>
+		<description>Horizontal air flow direction (0 = swing, 1-7 = fixed positions).</description>
+		<tags>
+			<tag>Control</tag>
+			<tag>Wind</tag>
+		</tags>
+		<state>
+			<options>
+				<option value="0">Swing</option>
+				<option value="1">Position 1</option>
+				<option value="2">Position 2</option>
+				<option value="3">Position 3</option>
+				<option value="4">Position 4</option>
+				<option value="5">Position 5</option>
+				<option value="6">Position 6</option>
+				<option value="7">Position 7</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="targetTemperature">
+		<item-type>Number:Temperature</item-type>
+		<label>Target Temperature</label>
+		<description>The set point temperature.</description>
+		<category>Temperature</category>
+		<tags>
+			<tag>Setpoint</tag>
+			<tag>Temperature</tag>
+		</tags>
+		<state min="16" max="30" step="0.5" pattern="%.1f %unit%"/>
+	</channel-type>
+
+	<channel-type id="indoorTemperature">
+		<item-type>Number:Temperature</item-type>
+		<label>Indoor Temperature</label>
+		<description>The temperature measured inside.</description>
+		<category>Temperature</category>
+		<tags>
+			<tag>Measurement</tag>
+			<tag>Temperature</tag>
+		</tags>
+		<state readOnly="true" pattern="%.1f %unit%"/>
+	</channel-type>
+
+	<channel-type id="outdoorTemperature">
+		<item-type>Number:Temperature</item-type>
+		<label>Outdoor Temperature</label>
+		<description>The temperature measured outside.</description>
+		<category>Temperature</category>
+		<tags>
+			<tag>Measurement</tag>
+			<tag>Temperature</tag>
+		</tags>
+		<state readOnly="true" pattern="%.1f %unit%"/>
+	</channel-type>
+
+	<channel-type id="electric">
+		<item-type>Number:Power</item-type>
+		<label>Power Consumption</label>
+		<description>The instantaneous electrical power draw.</description>
+		<category>Energy</category>
+		<tags>
+			<tag>Measurement</tag>
+			<tag>Power</tag>
+		</tags>
+		<state readOnly="true" pattern="%.0f %unit%"/>
+	</channel-type>
+
+	<channel-type id="errorCode">
+		<item-type>String</item-type>
+		<label>Error Code</label>
+		<description>The current error code reported by the unit ("00" = no error).</description>
+		<state readOnly="true"/>
+	</channel-type>
+
+	<channel-type id="entrust" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Entrust</label>
+		<description>Entrust (auto-adjust / "leave it to me") mode.</description>
+	</channel-type>
+
+	<channel-type id="vacant" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Vacant</label>
+		<description>Vacancy / away mode.</description>
+	</channel-type>
+
+	<channel-type id="coolHotJudge" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Cool/Hot Judge</label>
+		<description>Cool/hot judgement flag.</description>
+	</channel-type>
+
+	<channel-type id="selfCleanOperation" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Self-Clean Operation</label>
+		<description>Self-clean operation state.</description>
+	</channel-type>
+
+	<channel-type id="selfCleanReset" advanced="true">
+		<item-type>Switch</item-type>
+		<label>Self-Clean Reset</label>
+		<description>Resets the self-clean function.</description>
+	</channel-type>
+
+</thing:thing-descriptions>
